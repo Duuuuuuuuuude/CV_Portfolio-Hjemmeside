@@ -1,0 +1,139 @@
+# Before using: 
+#   Set variables:
+#       AzureDevOps.PAT
+#       Github.PAT
+#       PrivateEmail
+#   Make sure git-filter-repo  file is in the root directory of the repo (same folder as the .git file). Located here: https://github.com/newren/git-filter-repo.
+
+
+trigger:
+- main
+- Development
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  publicName: 'Azure_Pipeline'
+  publicEmail: '85315025+Duuuuuuuuuude@users.noreply.github.com'
+
+steps:
+# Installing Python
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+
+      # git config --global user.name '$(publicName)'
+      # git config --global user.email '$(publicEmail)'
+      # git config --global user.name '$(publicName)'
+      # git config --global user.email '$(publicEmail)'
+      # git commit --amend --reset-author --no-edit
+
+      # Finding private emails and the commit hash it belongs to.
+      # git log --pretty=format:"%h - %an <%ae> - %s" --all
+
+      # Change email address on specific commit.
+      # git checkout 9ca1da7 # 9ca1da7fa94e598bda19968228d49ae2a41b7822
+      # git config --global user.name '$(publicName)'
+      # git config user.email '$(publicEmail)'
+
+
+                                                                                                    # Syncing azure repo to github repo.
+
+      ####################################################
+      $stageDir = '$(Build.SourcesDirectory)' | Split-Path
+            
+      $githubDir = $stageDir +"\"+"gitHub"
+      $destination = $githubDir +"\"+"CV-Portfolio-Hjemmeside.git"
+      $alias = 'Duuuuuuuuuude:'+ "$(Github.PAT)"
+      
+      $sourceURL = 'https://$(AzureDevOps.PAT)@dev.azure.com/MartinKoldste/Koldste.dev/_git/CV-Portfolio-Hjemmeside'
+      $destURL = 'https://' + $alias + '@github.com/Duuuuuuuuuude/CV-Portfolio-Hjemmeside.git'
+            
+      #Check if the parent directory exists and delete
+      if((Test-Path -path $githubDir))
+      {
+        Remove-Item -Path $githubDir -Recurse -force
+      }
+      if(!(Test-Path -path $githubDir))
+      {
+        New-Item -ItemType directory -Path $githubDir
+        Set-Location $githubDir
+        git clone --mirror $sourceURL
+      }
+       else
+      {
+        Write-Host "The given folder path $githubDir already exists";
+      }
+
+      Set-Location $destination
+
+      # Set public email for all commits during sync
+      git config --global user.name '$(publicName)'
+      git config --global user.email '$(publicEmail)'
+      # git config user.name '$(publicName)'
+      # git config user.email '$(publicEmail)'
+
+
+                                                                                                        # Filter-repo to remove private emails.
+      #############################################
+      # Add the path for git-filter-repo. 
+      # It's important that the git-filter-repo file is in the root directory of the repo (same folder as the .git file). 
+      # Located here: https://github.com/newren/git-filter-repo
+      # Python also have to be installed. The code for that should be included in this .yml file at the top.
+      # $env:PATH = "$env:PATH;$(Build.SourcesDirectory)\bin"
+      $env:PATH = "$env:PATH;$(Build.SourcesDirectory)"
+
+      $oldEmail = '$(PrivateEmail)'
+      $correctName = '$(publicName)'
+      $correctEmail = '$(publicEmail)'
+
+      $env:GIT_AUTHOR_NAME = $correctName
+      $env:GIT_AUTHOR_EMAIL = $correctEmail
+      $env:GIT_COMMITTER_NAME = $correctName
+      $env:GIT_COMMITTER_EMAIL = $correctEmail
+
+      git filter-repo --commit-callback @"
+      if (commit.author_email == b'$oldEmail'):
+        commit.author_name = b'$correctName'
+        commit.author_email = b'$correctEmail'
+      if (commit.committer_email == b'$oldEmail'):
+        commit.committer_name = b'$correctName'
+        commit.committer_email = b'$correctEmail'
+      "@
+
+      Remove-Item Env:GIT_AUTHOR_NAME
+      Remove-Item Env:GIT_AUTHOR_EMAIL
+      Remove-Item Env:GIT_COMMITTER_NAME
+      Remove-Item Env:GIT_COMMITTER_EMAIL
+      ############################################
+
+                                                                                                        # Continue syncing azure repo to github repo.
+      #############################################
+            
+      Write-Output '*****Git removing remote secondary****'
+      git remote rm secondary
+      
+      Write-Output '*****Git remote add****'
+      git remote add --mirror=fetch secondary $destURL
+            
+      Write-Output '*****Git fetch origin****'
+      git fetch $sourceURL
+            
+      Write-Output '*****Git push secondary****'
+      git push secondary --all --force
+            
+      Write-Output '**Azure Devops repo synced with Github repo**'
+      Set-Location $stageDir
+            
+      if((Test-Path -path $githubDir))
+      {
+        Remove-Item -Path $githubDir -Recurse -force
+      }
+      ####################################################

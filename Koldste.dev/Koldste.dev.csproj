@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>841b3e01-63b9-4636-bf87-52653c09b6c1</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <ApplicationIcon>wwwroot\favicon_io\favicon.ico</ApplicationIcon>
+    <PackageIcon>apple-touch-icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\favicon_io\favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\koldste.dev.Common\appsettings.Development.json" Link="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\koldste.dev.Common\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\koldste.dev.Common\appsettings.Production.json" Link="appsettings.Production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\favicon_io\about.txt" />
+    <None Include="wwwroot\favicon_io\android-chrome-192x192.png" />
+    <None Include="wwwroot\favicon_io\android-chrome-512x512.png" />
+    <None Include="wwwroot\favicon_io\apple-touch-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="wwwroot\favicon_io\favicon-16x16.png" />
+    <None Include="wwwroot\favicon_io\favicon-32x32.png" />
+    <None Include="wwwroot\favicon_io\favicon.ico" />
+    <None Include="wwwroot\favicon_io\site.webmanifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AgeCalculator" Version="1.4.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
+  </ItemGroup>
+
+</Project>
