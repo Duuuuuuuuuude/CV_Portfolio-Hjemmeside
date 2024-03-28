@@ -1,0 +1,422 @@
+﻿@using System.Text.RegularExpressions
+@using System.Globalization
+@using static Koldste.dev.Web.Models.ViewModels.SearchResults.AboutDTO.AttributeDTO
+@using static Koldste.dev.Web.Models.ViewModels.SearchResults.AboutDTO
+@using static Koldste.dev.Web.Models.ViewModels.SearchResults.SearchResultsViewModel
+@inject IConfiguration Configuration
+
+@model SearchResultsViewModel
+@{
+    // TODO: // TODO: Midlertidlig løsning, indtil "Search/Index" view er mere dynamisk.
+}
+
+@{
+    ViewData["Title"] = "Martin Koldste - Backend Udvikler";
+}
+
+@section Scripts {
+    <script src="~/js/accordion.js" asp-append-version="true"></script>
+    <script src="~/js/ageCalculator.js" asp-append-version="true"></script>
+    <script src="~/js/searchBarExpand.js" asp-append-version="true"></script>
+    <script>
+        function clearSearch() {
+            document.getElementById("search-bar").value = "";
+            }
+
+        triggerInputEvent(); /* Triggers the input event on the search bar if it needs to be expanded on page load. Method is located in ~/js/searchBarExpand.js. */
+        triggerInputEvent(); /* Has to be called twice to work. */
+    </script>
+}   
+<link rel="stylesheet" href="~/css/SearchResults/Index.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Shared/SearchBar.css" asp-append-version="true" />
+
+
+@section Header {
+
+    <!-- Logo -->
+    <div class="logo-area">
+        <a href="" alt="Google" title="Gå til startsiden">
+            @* <img src="/images/Google_Logo_light_color_272x92dp.png" alt="Google" class="logo"> *@
+            <img style="width: 92px; height: 30px;" src="/images/Martin-Logo_544x185.png" alt="Google" title="Gå til startside" class="logo">
+        </a>
+    </div>
+
+    <!-- search nav bar -->
+    <nav id="nav">
+        <div class="search-modes">
+
+            <!-- Alle -->
+            <a href="/Search?q=@Model.SearchParameters.QueryStringAll" class="nav-mode">
+                <svg style="height: 16px; width:16px;" viewBox="0 0 24 24" class="mode-icon">
+                    <path d="M10 2v2a6 6 0 0 1 6 6h2a8 8 0 0 0-8-8z" fill="#34A853"></path>
+                    <path d="M10 4V2a8 8 0 0 0-8 8h2c0-3.3 2.7-6 6-6z" fill="#EA4335"></path>
+                    <path d="M4 10H2a8 8 0 0 0 8 8v-2c-3.3 0-6-2.69-6-6z" fill="#FBBC04"></path>
+                    <path d="M22 20.59l-5.69-5.69A7.96 7.96 0 0 0 18 10h-2a6 6 0 0 1-6 6v2c1.85 0 3.52-.64 4.88-1.68l5.69 5.69L22 20.59z" fill="#4285F4"></path>
+                </svg>
+                <span class="mode-text">
+                    Alle
+                </span>
+            </a>
+
+            <!-- CV -->
+            <a href="/Search?q=@Model.SearchParameters.QueryStringResume" class="nav-mode">
+                <svg style="height: 16px; width:16px;" viewBox="0 0 24 24" class="mode-icon">
+                    <path d="M12 11h6v2h-6v-2zm-6 6h12v-2H6v2zm0-4h4V7H6v6zm16-7.22v12.44c0 1.54-1.34 2.78-3 2.78H5c-1.64 0-3-1.25-3-2.78V5.78C2 4.26 3.36 3 5 3h14c1.64 0 3 1.25 3 2.78zM19.99 12V5.78c0-.42-.46-.78-1-.78H5c-.54 0-1 .36-1 .78v12.44c0 .42.46.78 1 .78h14c.54 0 1-.36 1-.78V12zM12 9h6V7h-6v2z">
+                    </path>
+                </svg>
+                <span class="mode-text">
+                    CV
+                </span>
+            </a>
+
+            <!-- About -->
+            <a href="/Search?q=@Model.SearchParameters.QueryStringAbout" class="selected-mode nav-mode">
+                <svg style="height: 16px; width:16px;" viewBox="0 0 24 24" class="mode-icon">
+                    <path d="">
+                    </path>
+                </svg>
+                <span class="mode-text">
+                    Om
+                </span>
+            </a>
+
+             <!-- Portfolio -->
+            <a href="/Search?q=@Model.SearchParameters.QueryStringPortfolio" class="nav-mode">
+                <svg style="height: 16px; width:16px;" viewBox="0 0 24 24" class="mode-icon">
+                    <path d="">
+                    </path>
+                </svg>
+                <span class="mode-text">
+                    Portfolio
+                </span>
+            </a>
+
+        </div>
+
+
+        <!-- Search Settings -->
+        <div class="search-settings">
+            <!-- Settings -->
+            <a href="#" role="button" class="nav-mode">
+                <span class="mode-text">
+                    Indstillinger
+                </span>
+            </a>
+
+            @*         <!-- Tools -->
+        <a href="#" role="button" class="nav-tools">
+        <span class="tools-text">
+        Værktøjer
+        </span>
+        </a>
+
+
+        <style>
+        .nav-tools {
+        margin: 21px 0 7px -3px;
+        padding: 6px 11px;
+        border: 1px solid transparent;
+        }
+
+        .nav-tools:hover {
+        background-color: #f8f8f8;
+        background-image: linear-gradient(to bottom, #f8f8f8, #f1f1f1);
+        border: 1px solid #c6c6c6;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.1);
+        transition: all 0.0s;
+        }
+        </style>*@
+
+        </div>
+    </nav>
+
+    <!-- search box-->
+    <div id="search-area">
+        <form class="search-container">
+            <!-- Search box -->
+
+            <textarea id="search-bar"
+                      type="search"
+                      title="Søg"
+                      rows="1"
+
+                      >@ViewData["SearchQueryParameter"]</textArea>
+
+            <div class="button-container">
+                <!--  Clear button -->
+                <button id="clear-btn" type="button" onclick="clearSearch()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z">
+                        </path>
+                    </svg>
+                </button>
+
+                @{
+                    // TODO: Separator
+                }
+
+                <!--  Search button -->
+                <button type="submit" id="search-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+        </form>
+    </div>
+}
+
+
+<section id="main">
+    <div class="main-result-page">
+
+        <p class="results-stats">Ca. 1.337.042 resultater (0.69 sekunder)</p>
+
+
+        <div style="border: 1px solid gray; width: 650px; height: 150px; ">
+
+        </div>
+
+
+
+        <!-- pagination -->
+        <div id="pagination">
+            <div>
+                <h1 id="google">Goooooooooogle</h1>
+                <div class="num-links">
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">5</a>
+                    <a href="#">6</a>
+                    <a href="#">7</a>
+                    <a href="#">8</a>
+                    <a href="#">9</a>
+                    <a href="#">10</a>
+                </div>
+            </div>
+
+            <div class="next">
+                <p>
+                    <a href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                        </svg>
+                        <br> Next
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- About -->
+    <div id="about">
+
+        <!-- About - title -->
+        <div id="about-area">
+            <a href="#" target="_blank">
+                <h3>Martin Koldste</h3>
+            </a>
+            <span id="about-job-title">
+                @Model.About?.JobTitle
+            </span>
+        </div>
+
+        <!-- About - body -->
+        <div id="about-group">
+            <!-- About - images -->
+            <div id="about-images">
+
+                <div class="about-img-area" id="about-img-area-1">
+                    <a href="@Model.About?.Images?[0]">
+                        <img class="about-img" id="about-img-1" src="">
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- About - data -->
+            <div id="about-data">
+                <p id="about-data-text">
+                    @Model.About?.AboutText
+                </p>
+
+            @foreach (var aboutAttribute in Model.About?.AboutAttributtes?.Values!)
+                {
+                    if (aboutAttribute is BirthdateAttributeDTO birthdateAttribute)
+                    {
+                        <p class="about-data">
+                            <span class="about-attribute">@birthdateAttribute.Name
+                            </span>: @birthdateAttribute.Value.ToString("d. MMMM yyyy", new CultureInfo("da-DK")) 
+                            (@birthdateAttribute.Age år), 
+                            @birthdateAttribute.Birthplace
+                        </p>
+                    }
+                    else
+                    {
+            <p class="about-data">
+                <span class="about-attribute">@aboutAttribute.Name</span>: @aboutAttribute.Value
+            </p>
+                }
+            }
+
+                <small class="feedback" id="about-feedback">Feedback</small>
+            </div>
+
+            <!-- About - profiles/social medias -->
+            <div class="media">
+
+                <span class="media-heading">Profiles</span>
+
+                <!-- Social - LinkedIn -->
+                <div class="social-container">
+                    <div class="social">
+                        <a href="https://www.linkedin.com/in/martin-koldste" target="_blank">
+                            <img class="social-image" src="/images/LinkedIn_Logo_56x56.png" alt="LinkedIn">
+                            <p>LinkedIn</p>
+                        </a>
+                    </div>
+
+                    <!-- Social - GitHub -->
+                    <div class="social">
+                        <a href="https://github.com/Duuuuuuuuuude" target="_blank">
+                            <img class="social-image" src="/images/GitHub_Logo_56x56.png" alt="GitHub">
+                            <p>GitHub</p>
+                        </a>
+                    </div>
+
+                    <div class="social"></div>
+                    <div class="social"></div>
+                    <div class="social"></div>
+                    <div class="social"></div>
+
+                </div>
+            </div>
+
+            <!-- About - Kompetencer -->
+                <table class="t-stats">
+                    <tr>
+                        <td><h3 style="font-weight: bold;">Professionelle</h3></td>
+                        <td><h3 style="font-weight: bold;">Personlige</h3></td>
+                    </tr>
+
+                    <tr>
+                        <td>.NET</td>
+                        <td>Detaljeorienteret</td>
+                    </tr>
+
+                    <tr>
+                        <td>MVC</td>
+                        <td>Flittig</td>
+                    </tr>
+
+                    <tr>
+                        <td>MSSQL</td>
+                        <td>Punktlig</td>
+                    </tr>
+
+                    <tr>
+                        <td>Razor</td>
+                        <td>Selvstændig</td>
+                    </tr>
+
+                    <tr>
+                        <td>Webudvikling</td>
+                        <td>Samarbejdsvillig</td>
+                    </tr>
+
+                    <tr>
+                        <td>DevOps</td>
+                        <td>Kvalitetsorienteret</td>
+                    </tr>
+
+                    <tr>
+                        <td>Java</td>
+                        <td>Engageret</td>
+                    </tr>
+
+                    <tr>
+                        <td>ASP.NET</td>
+                        <td>Vedholdende</td>
+                    </tr>
+
+                    <tr>
+                        <td>ADO.NET</td>
+                        <td>Nysgerrig</td>
+                    </tr>
+
+                    <tr>
+                        <td>RESTful API</td>
+                        <td>Struktureret</td>
+                    </tr>
+
+                    <tr>
+                        <td>CLEAN Architecture</td>
+                    </tr>
+
+                    <tr>
+                        <td>CQRS</td>
+                    </tr>
+
+                    <tr>
+                        <td>MACH</td>
+                    </tr>
+
+                    <tr>
+                        <td>Mediator</td>
+                    </tr>
+
+                    <tr>
+                        <td>Scrum</td>
+                    </tr>
+
+                    <tr>
+                        <td>Microsoft Identity Platform</td>
+                    </tr>
+
+                    <tr>
+                        <td>Microsoft Graph</td>
+                    </tr>
+
+                    <tr>
+                        <td>Python</td>
+                    </tr>
+
+                    <tr>
+                        <td>GIT</td>
+                    </tr>
+
+                    <tr>
+                        <td>XP</td>
+                    </tr>
+
+                    <tr>
+                        <td>Waterfall Projektstyring</td>
+                    </tr>
+
+                    <tr>
+                        <td>Backend Udvikling</td>
+                    </tr>
+
+                    <tr>
+                        <td>Agil Projektstyring</td>
+                    </tr>
+
+                    <tr>
+                        <td>JavaScript</td>
+                    </tr>
+
+                    <tr>
+                        <td>Azure</td>
+                    </tr>
+
+                </table>
+        </div>
+    </div>
+</section>

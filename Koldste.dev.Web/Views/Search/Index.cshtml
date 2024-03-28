@@ -1,0 +1,74 @@
+﻿@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Martin Koldste - Backend Udvikler";
+}
+
+@section Scripts {
+    <script src="~/js/typeAnimation.js" asp-append-version="true"></script>
+    <script src="~/js/searchBarExpand.js" asp-append-version="true"></script>
+    @{
+        // TODO: Få cursor animation til at virke.
+    }
+    @* <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> *@
+
+}
+@{
+    // TODO: Implement cursor animation.
+    @* <link rel="stylesheet" href="~/css/Search/Index.css" asp-append-version="true" /> *@
+}
+<link rel="stylesheet" href="~/css/Shared/SearchBar.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Search/Index.css" asp-append-version="true" />
+
+
+<!-- search box-->
+<div id="search-area">
+    <div class="search-container">
+        @{
+            // TODO: De to første delays stoppede med at virke, ved ikke hvorfor.
+        }
+        <textarea id="search-bar"
+                  class="type-animation "
+                  rows="1"
+                  data-redirectDelay="1000"
+                  data-startTypingDelay="650"
+                  data-txt="@Model.SearchParameters.QueryStringAll"
+                  data-speed="50"
+                  data-url="/Search?q=@Model.SearchParameters.QueryStringAll"
+                  type="search"
+                  title="Søg"
+                  href="/Search?q=@Model.SearchParameters.QueryStringAll">
+              </textarea>
+
+        <!--  Clear button -->
+        <div class="button-container">
+            <button id="clear-btn" type="button" onclick="clearSearch()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z">
+                    </path>
+                </svg>
+            </button>
+
+            @{
+                // TODO: Separator
+            }
+
+            <!--  Search button -->
+            <button type="submit" id="search-btn">
+                <a href="/Search?q=@Model.SearchParameters.QueryStringAll" role="button" id="search-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z">
+                        </path>
+                    </svg>
+                </a>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        function clearSearch() {
+            document.getElementById("search-bar").value = "";
+        }
+    </script>
+</div>

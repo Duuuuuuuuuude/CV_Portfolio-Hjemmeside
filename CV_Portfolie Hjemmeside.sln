@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "koldste.dev", "koldste.dev\koldste.dev.csproj", "{0F209D2F-318C-4AE6-B4B3-F825ABF2C9B1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Koldste.dev.Tests", "Koldste.dev.Tests\Koldste.dev.Tests.csproj", "{91BBEA34-0D66-43C0-93E8-D1529E26879D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Koldste.dev.API", "Koldste.dev.API\Koldste.dev.API.csproj", "{2E96F258-C672-44C0-A2C2-ACE875AB8809}"
@@ -19,16 +17,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "koldste.dev.Common", "kolds
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Koldste.dev.Tests.Playwright", "Koldste.dev.Tests.Playwright\Koldste.dev.Tests.Playwright.csproj", "{3CAE0800-28CF-4874-8269-5CA0744BCC3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Koldste.dev.Web", "Koldste.dev.Web\Koldste.dev.Web.csproj", "{98E164AE-5B8C-468B-ABD3-BD5601357080}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0F209D2F-318C-4AE6-B4B3-F825ABF2C9B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F209D2F-318C-4AE6-B4B3-F825ABF2C9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F209D2F-318C-4AE6-B4B3-F825ABF2C9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F209D2F-318C-4AE6-B4B3-F825ABF2C9B1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91BBEA34-0D66-43C0-93E8-D1529E26879D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91BBEA34-0D66-43C0-93E8-D1529E26879D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91BBEA34-0D66-43C0-93E8-D1529E26879D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +53,10 @@ Global
 		{3CAE0800-28CF-4874-8269-5CA0744BCC3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CAE0800-28CF-4874-8269-5CA0744BCC3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CAE0800-28CF-4874-8269-5CA0744BCC3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98E164AE-5B8C-468B-ABD3-BD5601357080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E164AE-5B8C-468B-ABD3-BD5601357080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E164AE-5B8C-468B-ABD3-BD5601357080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E164AE-5B8C-468B-ABD3-BD5601357080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

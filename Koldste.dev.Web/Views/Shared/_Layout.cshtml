@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="da">
+
+<span style="font-size: 20px; color: red; display: flex; justify-content: center;">Hjemmesiden er stadig under opbygning.</span>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewData["Title"]</title>
+    <!-- Favicon start-->
+    <link rel="apple-touch-icon" sizes="180x180" href="~/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="~/favicon_io/site.webmanifest">
+     <!-- Favicon end-->
+    <link rel="stylesheet" href="~/css/_Layout.css" asp-append-version="true" />
+    <!-- https://elad.medium.com/normalize-css-or-css-reset-9d75175c5d1e -->
+    <!-- https://github.com/necolas/normalize.css -->
+    <link type="text/css" rel="stylesheet" href="~/css/normalize.css">
+    <link type="text/css" rel="stylesheet" href="~/css/reset-local.css">
+</head>
+
+<body>
+    <header>
+        @RenderSection("Header", required: false)
+
+        <!-- top nav bar -->
+        <!-- Apps -->
+        <div id="apps-area">
+            <a href="#" role="button">
+                <svg class="apps" viewBox="0 0 24 24" style="width: 37px;">
+                    <path d="M6,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM6,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM16,6c0,1.1 0.9,2 2,2s2,-0.9 2,-2 -0.9,-2 -2,-2 -2,0.9 -2,2zM12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,14c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM18,20c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2z">
+                    </path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Profile -->
+        <div id="profilepic-area">
+            <img class="profilepic"
+                 src="/images/Profile_Pic_Old_Man_64x64.png"
+                 alt="Profil" />
+        </div>
+
+    </header>
+
+    <div id="page-container">
+        <div id="content-wrap">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+        <!-- Footer -->
+        <footer>
+
+            <div id="first-row-footer">
+                <span id="location">Danmark</span>
+            </div>
+
+            <div class="second-row-footer">
+                <span id="disclaimer">This website is not Google or in any way associated with Google Inc.</span>
+                <a class="footer-link" id="footer-settings">Indstillinger</a>
+            </div>
+
+        </footer>
+        <script>
+            @if (!string.IsNullOrWhiteSpace(ViewData["SearchQueryParameter"] as string))
+            {
+                // Sets the browsers query string. Done here to avoid redirects in the controller and make the controller easier to read.
+                <text>
+                    window.history.pushState({}, '', '?q=' + '@ViewData["SearchQueryParameter"]');
+                </text>
+            }
+        </script>
+        @RenderSection("Scripts", required: false)
+    </div>
+</body>
+</html>
