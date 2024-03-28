@@ -1,1 +1,1 @@
-Er på nuværende tidspunkt stadig under udvikling. Den nuværende udgave kan besøges [her](http://143.244.204.233:80), hvis ikke jeg er i gang med konfigurering af serveren.
+Hjemmesiden er stadig meget ny og under udvikling, så forvent lidt fejl. Den nuværende udgave  kan besøges [her](koldste.dev), hvis ikke serveren er i gang med at blive konfigureret. I tilfælde af at siden er midlertidligt nede, kan det seneste Docker image hentes her: `docker pull ghcr.io/duuuuuuuuuude/cv_portfolio-hjemmeside:latest`.
