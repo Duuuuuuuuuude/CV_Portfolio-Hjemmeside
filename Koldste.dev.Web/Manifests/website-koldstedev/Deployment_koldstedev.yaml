@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  name: koldstedev
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: koldstedev
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: koldstedev
+    spec:
+      containers:
+        # - image: <set in the azure pipeline>
+          name: koldstedev
+          ports:
+            - containerPort: 8800
+              name: http
