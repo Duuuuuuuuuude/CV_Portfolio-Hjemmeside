@@ -67,16 +67,16 @@ stages:
               artifactName: 'Manifests'
               downloadPath: '$(System.ArtifactsDirectory)/Manifests'
 
-          - task: KubernetesManifest@1
-            displayName: Create imagePullSecret
-            inputs:
-              action: 'createSecret'
-              connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
-              namespace: '$(k8sNamespace)'
-              secretType: 'dockerRegistry'
-              secretName: '$(imagePullSecret)'
-              dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+          # - task: KubernetesManifest@1
+          #   displayName: Create imagePullSecret
+          #   inputs:
+          #     action: 'createSecret'
+          #     connectionType: 'kubernetesServiceConnection'
+          #     kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+          #     namespace: '$(k8sNamespace)'
+          #     secretType: 'dockerRegistry'
+          #     secretName: '$(imagePullSecret)'
+          #     dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
           # - task: KubernetesManifest@1
           #   displayName: Deploy to Kubernetes cluster
@@ -104,7 +104,6 @@ stages:
               containerRegistryType: 'Container Registry'
               dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
               secretName: '$(imagePullSecret)'
-              forceUpdate: false
               checkLatest: true
               outputFormat: 'yaml'
 
