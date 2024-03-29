@@ -17,6 +17,8 @@ body {
     --lhs-width: calc(var(--center-abs-margin) - var(--lhs-margin) - var(--center-margin));
     --center-margin: 24px;
     position: relative;
+/*    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;*/
 }
 
 /* Header */
