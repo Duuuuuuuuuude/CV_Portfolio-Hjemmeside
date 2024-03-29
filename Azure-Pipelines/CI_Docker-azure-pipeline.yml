@@ -88,7 +88,7 @@ stages:
               manifests: |
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
-              containers: 'koldstedev=$(containerRegistry)/$(imageRepository):$(tag)'
+              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
               imagePullSecrets: '$(imagePullSecret)'
 
 
