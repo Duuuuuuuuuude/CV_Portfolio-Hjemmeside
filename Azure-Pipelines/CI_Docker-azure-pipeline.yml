@@ -99,7 +99,9 @@ stages:
               namespace: '$(k8sNamespace)'
               command: 'apply'
               useConfigurationFile: true
-              configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml'
+              configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev'
+              # configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml 
+                              # $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml'
               secretType: 'dockerRegistry'
               containerRegistryType: 'Container Registry'
               dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
