@@ -4,35 +4,120 @@
 
 trigger:
 - main
-- Development
 
-resources:
-- repo: self
+# resources:
+# - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+  tag: 'build-$(Build.BuildId)sha256-$(Build.SourceVersion)'
+  containerRegistryServiceConnection: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+  imageRepository: 'koldste-dev-digitalocean-container-registry/AzurePipeline/koldste.dev'
+  
+  # release pipeline variables
+  imagePullSecret: azure-secret-registry-koldste-dev-digitalocean-container-registry
+  k8sNamespace: backend
+  # imageRepository: 'koldste-dev-digitalocean-container-registry/AzurePipeline/koldste.dev'
+  # tag: 'v$(Build.BuildId)@sha1:$(Build.SourceVersion)'
+  containerRegistry: 'registry.digitalocean.com'
+
 
 stages:
 - stage: Build
   displayName: Build image
   jobs:
   - job: Build
-    displayName: Build
+    displayName: Build and publish artifact
     pool:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-      displayName: Build an image
+      displayName: 'Build and push an image to container registry'
       inputs:
-        command: 'build'
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
-        buildContext: '**'
+        buildContext: '.'
         tags: '$(tag)'
-        arguments: './output'
-
+        
     - task: PublishPipelineArtifact@1
-      displayName: "Publish Pipeline Artifact"
       inputs:
-        targetPath: '$(Pipeline.Workspace)/output'
-        artifact: '.DockerOutput'
-        publishLocation: 'pipeline'
+        artifactName: 'Manifests'
+        path: 'Koldste.dev.Web/Manifests'
+
+
+
+# Release pipeline
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy job
+    pool:
+      vmImage: ubuntu-latest
+    environment: koldstedev-do-kubernetes
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'Manifests'
+              downloadPath: '$(System.ArtifactsDirectory)/Manifests'
+
+          - task: KubernetesManifest@1
+            displayName: Create imagePullSecret
+            inputs:
+              action: 'createSecret'
+              connectionType: 'kubernetesServiceConnection'
+              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              secretType: 'dockerRegistry'
+              secretName: '$(imagePullSecret)'
+              dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+
+          - task: KubernetesManifest@1
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: 'deploy'
+              connectionType: 'kubernetesServiceConnection'
+              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              manifests: |
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
+              containers: 'koldstedev=$(containerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(imagePullSecret)'
+
+
+
+
+
+
+
+
+
+
+
+          # - task: KubernetesManifest@1
+          #   displayName: Rollback on failure
+          #   inputs:
+          #     action: executeCommands
+          #     commands: |
+          #       kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
+          #     condition: failed()
+
+
+          # - task: KubernetesManifest@1
+          #   inputs:
+          #     action: 'patch'
+          #     connectionType: 'kubernetesServiceConnection'
+          #     # kubernetesServiceConnection: 'koldstedev-k8s-cluster-digitalocean'
+          #     namespace: 'backend'
+          #     resourceToPatch: 'name'
+          #     kind: 'deployment'
+          #     name: 'koldstedev'
+          #     mergeStrategy: 'strategic' # TODO
+          #     patch: 'kubectl patch deployment your-deployment-name -p ''{"spec":{"template":{"spec":{"containers":[{"name":"koldstedev","image":"@(dockerRegistry)/@(imageRepository):@tag"}]}}}}'''
