@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: koldstedev
-        image: <IMAGE_NAME_PLACEHOLDER - Should be set in the azure pipeline>
+        image: {{DOCKER_IMAGE_NAME}}:{{DOCKER_IMAGE_TAG}} # Placeholders. Will be replaced in the Azure pipeline.
         ports:
         - containerPort: 8800
           name: http
