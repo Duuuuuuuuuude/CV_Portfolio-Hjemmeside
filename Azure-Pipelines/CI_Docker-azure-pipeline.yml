@@ -78,24 +78,35 @@ stages:
               secretName: '$(imagePullSecret)'
               dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
-          - task: KubernetesManifest@1
-            displayName: Deploy to Kubernetes cluster
+          # - task: KubernetesManifest@1
+          #   displayName: Deploy to Kubernetes cluster
+          #   inputs:
+          #     action: 'deploy'
+          #     connectionType: 'kubernetesServiceConnection'
+          #     kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+          #     namespace: '$(k8sNamespace)'
+          #     manifests: |
+          #       $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+          #       $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
+          #     containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+          #     imagePullSecrets: '$(imagePullSecret)'
+
+
+          - task: Kubernetes@1
             inputs:
-              action: 'deploy'
-              connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
               namespace: '$(k8sNamespace)'
-              manifests: |
-                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
-              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-              imagePullSecrets: '$(imagePullSecret)'
-
-
-
-
-
-
+              command: 'apply'
+              useConfigurationFile: true
+              configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml'
+              secretType: 'dockerRegistry'
+              containerRegistryType: 'Container Registry'
+              dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+              secretName: '$(imagePullSecret)'
+              forceUpdate: false
+              checkLatest: true
+              outputFormat: 'yaml'
 
 
 
