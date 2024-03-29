@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations: {}
   name: koldstedev
   namespace: backend
 spec:
@@ -17,8 +16,20 @@ spec:
         app: koldstedev
     spec:
       containers:
-        # - image: <set in the azure pipeline>
-          name: koldstedev
-          ports:
-            - containerPort: 8800
-              name: http
+      - name: koldstedev
+        image: <IMAGE_NAME_PLACEHOLDER - Should be set in the azure pipeline>
+        ports:
+        - containerPort: 8800
+          name: http
+
+        securityContext: # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 2000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+                drop:
+                - all
+              
