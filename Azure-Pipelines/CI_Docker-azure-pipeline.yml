@@ -195,8 +195,8 @@ stages:
                                 -X POST \
                                 -H "Content-Type: application/json" \
                                 -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                ""$container_registry_API_base_URL"/registry/"$registry_name"/garbage-collection")
-
+                                ""$container_registry_API_base_URL"/registry/garbage-collection")
+                                
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
                 json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
