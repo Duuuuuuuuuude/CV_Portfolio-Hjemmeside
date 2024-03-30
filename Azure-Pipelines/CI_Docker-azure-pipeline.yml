@@ -57,7 +57,7 @@ stages:
             # Checks the HTTP status error codes
             if [ http_status eq 404]; then
               echo "HTTP status code: $http_status \n"
-              echo "No active garbage collection found. Continuing pushing image. \n"
+              echo "No active garbage collection found. Continuing to push image. \n"
               echo "Response body: $json_response"
               exit 0
             elif [ http_status eq 200 ]
