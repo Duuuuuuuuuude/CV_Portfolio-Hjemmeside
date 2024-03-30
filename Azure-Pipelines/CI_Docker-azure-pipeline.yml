@@ -76,7 +76,7 @@ stages:
               # 20 second sleep with a loading bar.
               for ((i=1; i<=seconds_between_retries; i++))
               do
-                echo -n "."
+                stdbuf -o0 echo -n "."
                 sleep 1
               done
               echo
