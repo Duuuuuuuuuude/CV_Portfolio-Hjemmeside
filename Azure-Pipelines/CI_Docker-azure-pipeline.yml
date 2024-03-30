@@ -44,11 +44,12 @@ stages:
           while [ $http_status_code -eq 404 ]
           do
             echo "Getting active garbage collection"
+
             response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
                             -H "Content-Type: application/json" \
-                            -H "Authorization: Bearer $bearer_token_container_registry" \
-                            "$container_registry_API_base_URL/garbage-collection")
+                            -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                            ""$container_registry_API_base_URL"/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
             http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -146,6 +147,8 @@ stages:
               rolloutStatusTimeout: '180'
 
 ########## ROLLBACK HERE
+
+
 
           - task: Bash@3
             displayName: 'Clean up the container registry'
