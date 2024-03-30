@@ -115,7 +115,7 @@ stages:
               arguments: '--repository $(repositoryName) --delete_days_old 3 --min_to_keep 10 --verbose yes --bearer_token_container_registry $(bearerTokenContainerRegistry) --container_registry_API_base_URL $(containerRegistryAPIBaseURL) --repository_name_URL_encoded $(repositoryNameURLEncoded)'
               script: |
                 #!/bin/bash
-      
+
                 min_to_keep=${min_to_keep:-10}
                 delete_days_old=${delete_days_old:-4}
                 verbose=no
@@ -133,6 +133,11 @@ stages:
       
                   shift
                 done
+
+                [[ -z "$bearer_token_container_registry" ]] && {
+                  echo "Error: You need to define '$repository'"
+                  exit 1
+                }
       
                 [[ -z "$repository" ]] && {
                   echo "Error: You need to define '--repository'"
