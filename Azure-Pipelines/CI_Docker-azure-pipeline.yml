@@ -124,15 +124,15 @@ stages:
                 container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
                 repository_name_URL_encoded=$(repositoryNameURLEncoded)
       
-                # while [ $# -gt 0 ]; do
+                while [ $# -gt 0 ]; do
       
-                #   if [[ $1 == *"--"* ]]; then
-                #     param="${1/--/}"
-                #     declare "$param"="$2"
-                #   fi
+                  if [[ $1 == *"--"* ]]; then
+                    param="${1/--/}"
+                    declare "$param"="$2"
+                  fi
       
-                #   shift
-                # done
+                  shift
+                done
       
                 # [[ -z "$repository" ]] && {
                 #   echo "Error: You need to define '--repository'"
