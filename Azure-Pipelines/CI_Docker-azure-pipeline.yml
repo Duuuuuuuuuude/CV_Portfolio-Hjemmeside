@@ -20,7 +20,6 @@ variables:
   # tag: 'v$(Build.BuildId)@sha1:$(Build.SourceVersion)'
   containerRegistryURL: 'registry.digitalocean.com'
 
-
 stages:
 - stage: Build
   displayName: Build image
@@ -91,15 +90,6 @@ stages:
               kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
               namespace: '$(k8sNamespace)'
               manifests: |
-                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
+                $(System.ArtifactsDirectory)/Manifests
               imagePullSecrets: '$(imagePullSecret)'
-
-
-          # - task: KubernetesManifest@1
-          #   displayName: Rollback on failure
-          #   inputs:
-          #     action: executeCommands
-          #     commands: |
-          #       kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
-          #     condition: failed()
+              rolloutStatusTimeout: '180'
