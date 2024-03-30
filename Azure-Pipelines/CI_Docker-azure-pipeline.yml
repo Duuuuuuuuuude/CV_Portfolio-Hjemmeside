@@ -45,23 +45,23 @@ stages:
           do
             echo "Getting active garbage collection"
             response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
-                  -X GET \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer $bearer_token_container_registry" \
-                  "$container_registry_API_base_URL/garbage-collection")
+                            -X GET \
+                            -H "Content-Type: application/json" \
+                            -H "Authorization: Bearer $bearer_token_container_registry" \
+                            "$container_registry_API_base_URL/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
-            http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
             json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
             # Checks the HTTP status error codes
-            if [ $http_status -eq 404 ]; then
-              echo "HTTP status code: $http_status \n"
+            if [ $http_status_code -eq 404 ]; then
+              echo "HTTP status code: $http_status_code \n"
               echo "No active garbage collection found. Continuing to push image. \n"
               echo "Response body: $json_response"
               exit 0
-            elif [ $http_status -eq 200 ]
-              echo "HTTP status code: $http_status \n"
+            elif [ $http_status_code -eq 200 ]; then
+              echo "HTTP status code: $http_status_code \n"
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in 10 seconds. \n"
               # 10 second sleep with a loading bar.
@@ -72,7 +72,7 @@ stages:
               done
               echo
             else
-              echo "HTTP status code: $http_status \n"
+              echo "HTTP status code: $http_status_code \n"
               echo "Response body: $json_response"
               exit 1
             fi
