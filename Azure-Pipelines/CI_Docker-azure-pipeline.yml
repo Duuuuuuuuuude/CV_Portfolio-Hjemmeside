@@ -121,7 +121,7 @@ stages:
 
                 min_to_keep=${min_to_keep:-10}
                 delete_days_old=${delete_days_old:-4}
-                verbose=no
+                verbose=yes
                 repository=$(repositoryName)
                 bearer_token_container_registry=$(bearerTokenContainerRegistry)
                 container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
@@ -158,6 +158,8 @@ stages:
                 # deletable_tags=$(curl --silent -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
 
                 echo "Error: You need to define "$deletable_tags""
+
+
                 [[ -z "$deletable_tags" ]] && {
                   [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
                   exit 0
