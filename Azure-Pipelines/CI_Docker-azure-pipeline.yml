@@ -126,7 +126,12 @@ stages:
                 container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
                 repository_name_URL_encoded=$(repositoryNameURLEncoded)
 
-                response=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200")
+                response=$(curl --silent \
+                                --write-out "HTTPSTATUS:%{http_code}" \
+                                -X GET \
+                                -H "Content-Type: application/json" \
+                                -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                                ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200")
 
                 # Separates the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -135,7 +140,10 @@ stages:
                 # Checks the HTTP status code and exits if the HTTP request failed. Also prints out the json body, if it failed and message if there was nothing to delete
                 if [ $http_status -eq 404 ]; then
                     echo "Error: HTTP response $http_status"
-                    [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
+                fi
+
+                if [ $http_status -eq 404 ] && [[ "$verbose" == "yes" ]]; then
+                    echo "Nothing to delete"
                     exit 0
                 elif [ $http_status -ne 200 ]; then
                     echo "Error: HTTP response $http_status"
@@ -145,7 +153,12 @@ stages:
 
                 date_boundary=$(date -d"-$delete_days_old days" +%s)
                 # deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
-                deletable_tags=$(curl --silent -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
+                deletable_tags=$(curl --silent \
+                                      -X GET \
+                                      -H "Content-Type: application/json" \
+                                      -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                                      ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" \
+                                      | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
 
                 # Check the exit status of jq for errors
                 if [ $? -ne 0 ]; then
@@ -163,9 +176,12 @@ stages:
 
                 # Tags being deleted on the images.
                 for tag in $deletable_tags; do
-                  response=$(curl --write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                    ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
+                  response=$(curl --silent \
+                                  --write-out "HTTPSTATUS:%{http_code}" \
+                                  -X DELETE \
+                                  -H "Content-Type: application/json" \
+                                  -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                                  ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
 
                   # Separate the JSON response from the HTTP status
                   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -184,9 +200,12 @@ stages:
                 done
 
                 # This will delete images no longer used and untagged images.
-                response=$(curl --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                  ""$container_registry_API_base_URL"/registry/"$repository_name_URL_encoded"/garbage-collection")
+                response=$(curl --silent \
+                                --write-out "HTTPSTATUS:%{http_code}" \
+                                -X GET \
+                                -H "Content-Type: application/json" \
+                                -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                                ""$container_registry_API_base_URL"/registry/"$repository_name_URL_encoded"/garbage-collection")
 
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
