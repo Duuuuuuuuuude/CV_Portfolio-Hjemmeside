@@ -163,7 +163,7 @@ stages:
 
                 # Tags being deleted on the images.
                 for tag in $deletable_tags; do
-                  response=$(curl--write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
+                  response=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
                     -H "Authorization: Bearer "$bearer_token_container_registry"" \
                     ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
 
@@ -175,7 +175,9 @@ stages:
                   if [ $http_status -ne 200 ]; then
                     echo "Error: HTTP response $http_status"
                     echo "Response body: $json_response"
-                    exit 1
+                    if [ $http_status -ne 404 ]; then
+                      exit 1
+                    fi
                   fi
                 done
 
