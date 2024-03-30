@@ -79,8 +79,8 @@ stages:
               dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
           - script: |
-              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml)
-              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml)
+              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
             displayName: 'Replace Docker image name and tag in deployment manifest file'
 
           - task: KubernetesManifest@1
