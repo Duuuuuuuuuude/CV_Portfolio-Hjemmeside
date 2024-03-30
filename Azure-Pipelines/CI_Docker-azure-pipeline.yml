@@ -115,12 +115,11 @@ stages:
             displayName: 'Clean up the container registry'
             inputs:
               targetType: 'inline'
-              arguments: '--delete_days_old 3 --min_to_keep 10 --verbose yes'
               script: |
                 #!/bin/bash
 
-                min_to_keep=${min_to_keep:-10}
-                delete_days_old=${delete_days_old:-4}
+                min_to_keep=10
+                delete_days_old=3
                 verbose=yes
                 repository=$(repositoryName)
                 bearer_token_container_registry=$(bearerTokenContainerRegistry)
@@ -156,9 +155,6 @@ stages:
                 date_boundary=$(date -d"-$delete_days_old days" +%s)
                 deletable_tags=$(curl --silent -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
                 # deletable_tags=$(curl --silent -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
-
-                echo "Error: You need to define "$deletable_tags""
-
 
                 [[ -z "$deletable_tags" ]] && {
                   [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
