@@ -172,15 +172,16 @@ stages:
                   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
                   # Checks the HTTP status error codes
-                  if [ $http_status -ne 200 ]; then
+                  if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
+                    echo "Response body: $json_response"
+                  fi
+
+                  if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
                     echo "Error: HTTP response $http_status"
                     echo "Response body: $json_response"
-                    if [ $http_status -ne 404 ]; then
-                      exit 1
-                    fi
+                    exit 1
                   fi
                 done
-
 
                 # This will delete images no longer used and untagged images.
                 response=$(curl --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" \
