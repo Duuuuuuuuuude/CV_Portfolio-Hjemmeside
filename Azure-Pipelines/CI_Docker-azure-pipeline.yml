@@ -52,34 +52,33 @@ stages:
                             -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
                             ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
-            # Separate the JSON response from the HTTP status
-            http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-            json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+            # # Separate the JSON response from the HTTP status
+            # http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            # json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
             # Checks the HTTP status error codes
             if [ $http_status_code -eq 404 ]; then
+              # echo "HTTP status code: $http_status_code"
+              # echo "No active garbage collection found. Continuing to push image."
+              # echo "Response body: $json_response"
+              # echo
+              # exit 0
+            elif [ $http_status_code -eq 200 ]; then
               echo "HTTP status code: $http_status_code"
-              echo "No active garbage collection found. Continuing to push image."
+              echo "Response body: $json_response"
+              echo "Active garbage collection found. Trying again in 10 seconds."
+              # 10 second sleep with a loading bar.
+              for i in {1..10}
+              do
+                echo -n "."
+                sleep 1
+              done
+              echo
+            else
+              echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
               echo
-              exit 0
-            # elif [ $http_status_code -eq 200 ]; then
-            #   echo "HTTP status code: $http_status_code"
-            #   echo "Response body: $json_response"
-            #   echo "Active garbage collection found. Trying again in 10 seconds."
-            #   # 10 second sleep with a loading bar.
-            #   for i in {1..10}
-            #   do
-            #     echo -n "."
-            #     sleep 1
-            #   done
-            #   echo
-
-            # else
-            #   echo "HTTP status code: $http_status_code"
-            #   echo "Response body: $json_response"
-            #   echo
-            #   exit 1
+              exit 1
             fi
           done
         failOnStderr: true
