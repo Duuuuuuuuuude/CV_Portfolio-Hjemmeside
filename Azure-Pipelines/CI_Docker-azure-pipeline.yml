@@ -119,7 +119,7 @@ stages:
                 min_to_keep=${min_to_keep:-10}
                 delete_days_old=${delete_days_old:-4}
                 verbose=no
-                repository='azurepipeline/koldste.dev'
+                repository=$(repositoryName)
                 bearer_token_container_registry=''
                 container_registry_API_base_URL=''
                 repository_name_URL_encoded=''
