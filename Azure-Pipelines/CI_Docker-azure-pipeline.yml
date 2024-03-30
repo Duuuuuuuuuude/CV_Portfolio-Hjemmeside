@@ -96,27 +96,6 @@ stages:
               imagePullSecrets: '$(imagePullSecret)'
 
 
-          # - task: Kubernetes@1
-          #   inputs:
-          #     connectionType: 'Kubernetes Service Connection'
-          #     kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
-          #     namespace: '$(k8sNamespace)'
-          #     command: 'apply'
-          #     useConfigurationFile: true
-          #     configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev'
-          #     # configuration: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml 
-          #                     # $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml'
-          #     secretType: 'dockerRegistry'
-          #     containerRegistryType: 'Container Registry'
-          #     dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
-          #     secretName: '$(imagePullSecret)'
-          #     checkLatest: true
-          #     outputFormat: 'yaml'
-
-
-
-
-
           # - task: KubernetesManifest@1
           #   displayName: Rollback on failure
           #   inputs:
@@ -124,16 +103,3 @@ stages:
           #     commands: |
           #       kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
           #     condition: failed()
-
-
-          # - task: KubernetesManifest@1
-          #   inputs:
-          #     action: 'patch'
-          #     connectionType: 'kubernetesServiceConnection'
-          #     # kubernetesServiceConnection: 'koldstedev-k8s-cluster-digitalocean'
-          #     namespace: 'backend'
-          #     resourceToPatch: 'name'
-          #     kind: 'deployment'
-          #     name: 'koldstedev'
-          #     mergeStrategy: 'strategic' # TODO
-          #     patch: 'kubectl patch deployment your-deployment-name -p ''{"spec":{"template":{"spec":{"containers":[{"name":"koldstedev","image":"@(dockerRegistry)/@(imageRepository):@tag"}]}}}}'''
