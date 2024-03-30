@@ -12,6 +12,8 @@ variables:
 - group: Container-Registry-do
 - name: containerRegistryServiceConnection
   value: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+- name: registryName
+  value: koldste-dev-digitalocean-container-registry
 
   # release pipeline variables
   # - group: Container-Registry-do
@@ -51,7 +53,7 @@ stages:
                             -X GET \
                             -H "Content-Type: application/json" \
                             -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                            ""$container_registry_API_base_URL"/garbage-collection")
+                            ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
             http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -162,19 +164,14 @@ stages:
                 min_to_keep=10
                 delete_days_old=3
                 verbose=yes
-                repository=$(repositoryName)
-                bearer_token_container_registry=$(bearerTokenContainerRegistry)
-                container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
-                repository_name_URL_encoded=$(repositoryNameURLEncoded)
-                registry_name=$(registryName)
 
                 # Gets all tags in repository
                 response=$(curl --silent \
                                 --write-out "HTTPSTATUS:%{http_code}" \
                                 -X GET \
                                 -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200")
+                                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
+                                ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags?per_page=200")
 
                 # Separates the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -199,8 +196,8 @@ stages:
                 # deletable_tags=$(curl --silent \
                 #                       -X GET \
                 #                       -H "Content-Type: application/json" \
-                #                       -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                #                       ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" \
+                #                       -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
+                #                       ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags?per_page=200" \
                 #                       | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
 
                 # Check the exit status of jq for errors
@@ -222,8 +219,8 @@ stages:
                   response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                                   -X DELETE \
                                   -H "Content-Type: application/json" \
-                                  -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                  ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
+                                  -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
+                                  ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags/$tag")
 
                   # Separate the JSON response from the HTTP status
                   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -245,8 +242,8 @@ stages:
                 response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                                 -X POST \
                                 -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                ""$container_registry_API_base_URL"/garbage-collection")
+                                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
+                                ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
