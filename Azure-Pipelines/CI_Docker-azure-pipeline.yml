@@ -48,7 +48,7 @@ stages:
                             -X GET \
                             -H "Content-Type: application/json" \
                             -H "Authorization: Bearer $bearer_token_container_registry" \
-                            ""$container_registry_API_base_URL"/garbage-collection")
+                            "$container_registry_API_base_URL/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
             http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
