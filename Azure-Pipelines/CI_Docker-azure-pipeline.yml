@@ -47,12 +47,10 @@ stages:
           do
             echo "Getting active garbage collection"
 
-            echo ""$container_registry_API_base_URL"/garbage-collection"
-
             response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
                             -H "Content-Type: application/json" \
-                            -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                            -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
                             ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
