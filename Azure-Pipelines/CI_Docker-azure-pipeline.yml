@@ -108,10 +108,92 @@ stages:
           #   inputs:
           #     dockerVersion: '17.09.0-ce'
 
-          - script: |
-              curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/$(repositoryNameURLEncoded)/tags?per_page=200"
+          # - script: |
+          #     curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/$(repositoryNameURLEncoded)/tags?per_page=200"
 
-              
 
-              jq ".[10:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-3d +%s)) | .tag"
+          #   doctl registry repository delete-tag 
+          #       web-api-http-prod $(
+          #                     doctl registry repository list-tags web-api-http-prod --output json 
+          #       | jq ".[5:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-5d +%s)) | .tag " 
+          #                     -r | tr '\n' ' ') --force
+
+
+          #     jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-3d +%s)) | .tag" -r | tr '\n' ' '
+          #   displayName: 'Clean up the container registry'
+
+
+
+
+
+          - task: Bash@3
             displayName: 'Clean up the container registry'
+            inputs:
+              targetType: 'inline'
+              arguments: '--repository $(repositoryName) --delete_days_old 3 --min_to_keep 10 --verbose yes --bearer_token_container_registry $(bearerTokenContainerRegistry) --container_registry_API_base_URL $(containerRegistryAPIBaseURL) --repository_name_URL_encoded $(repositoryNameURLEncoded)'
+              script: |
+                #!/bin/bash
+      
+                min_to_keep=${min_to_keep:-10}
+                delete_days_old=${delete_days_old:-4}
+                verbose=no
+                repository=''
+                bearer_token_container_registry=''
+                container_registry_API_base_URL=''
+                repository_name_URL_encoded?''
+      
+                while [ $# -gt 0 ]; do
+      
+                  if [[ $1 == *"--"* ]]; then
+                    param="${1/--/}"
+                    declare "$param"="$2"
+                  fi
+      
+                  shift
+                done
+      
+                [[ -z "$repository" ]] && {
+                  echo "Error: You need to define '--repository'"
+                  exit 1
+                }
+
+                [[ -z "$bearer_token_container_registry" ]] && {
+                  echo "Error: You need to define '--bearer_token_container_registry'"
+                  exit 1
+                }
+
+                [[ -z "$container_registry_API_base_URL" ]] && {
+                  echo "Error: You need to define '--container_registry_API_base_URL'"
+                  exit 1
+                }
+
+                date_boundary=$(date -v-"$delete_days_old"d +%s)
+                deletable_tags=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+      
+                [[ -z "$deletable_tags" ]] && {
+                  [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
+                  exit 0
+                }
+      
+                [[ "$verbose" == "yes" ]] && {
+                  echo "We are going to DELETE images that are more than $delete_days_old days"
+                  echo "We are going to KEEP at least the newer $min_to_keep images"
+      
+                  echo "Deleteable tags: $deletable_tags"
+                }
+
+                for tag in $deletable_tags; do
+                  curl -X DELETE -H "Content-Type: application/json" \
+                    -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                    ""$container_registry_API_base_URL"/repositories/$repository_name_URL_encoded"/tags/$tag"
+                done
+
+                curl -X GET -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                  ""$container_registry_API_base_URL"/registry/$repository_name_URL_encoded/garbage-collection"
+              failOnStderr: true
+
+
+
+
+          
