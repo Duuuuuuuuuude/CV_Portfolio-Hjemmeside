@@ -112,7 +112,7 @@ stages:
             displayName: 'Clean up the container registry'
             inputs:
               targetType: 'inline'
-              arguments: '--repository $(repositoryName) --delete_days_old 3 --min_to_keep 10 --verbose yes --bearer_token_container_registry $(bearerTokenContainerRegistry) --container_registry_API_base_URL $(containerRegistryAPIBaseURL) --repository_name_URL_encoded $(repositoryNameURLEncoded)'
+              arguments: '--repository --$(repositoryName) --delete_days_old 3 --min_to_keep 10 --verbose yes --bearer_token_container_registry $(bearerTokenContainerRegistry) --container_registry_API_base_URL $(containerRegistryAPIBaseURL) --repository_name_URL_encoded $(repositoryNameURLEncoded)'
               script: |
                 #!/bin/bash
 
