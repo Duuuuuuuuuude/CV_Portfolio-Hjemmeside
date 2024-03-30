@@ -5,20 +5,30 @@
 trigger:
 - main
 
-# resources:
-# - repo: self
+resources:
+- repo: self
 
 variables:
-  tag: 'build-$(Build.BuildId)sha256-$(Build.SourceVersion)'
-  containerRegistryServiceConnection: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
-  imageRepository: 'koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev'
+- group: Container-Registry-do
+- name: containerRegistryServiceConnection
+  value: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+  # tag: 'build-$(Build.BuildId)sha256-$(Build.SourceVersion)'
+  # containerRegistryServiceConnection: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+  # imageRepository: 'koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev'
   
   # release pipeline variables
-  imagePullSecret: azure-secret-registry-koldste-dev-digitalocean-container-registry
-  k8sNamespace: backend
-  # imageRepository: 'koldste-dev-digitalocean-container-registry/AzurePipeline/koldste.dev'
-  # tag: 'v$(Build.BuildId)@sha1:$(Build.SourceVersion)'
-  containerRegistryURL: 'registry.digitalocean.com'
+  # - group: Container-Registry-do
+- name: imagePullSecret
+  value: azure-secret-registry-koldste-dev-digitalocean-container-registry
+  # imagePullSecret: azure-secret-registry-koldste-dev-digitalocean-container-registry
+- name: k8sNamespace
+  value: backend
+  # k8sNamespace: backend
+  # imageRepository: 'koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev'
+  # tag: 'build-$(Build.BuildId)sha256-$(Build.SourceVersion)'
+- name: containerRegistryURL
+  value: 'registry.digitalocean.com'
+  # containerRegistryURL: 'registry.digitalocean.com'
 
 stages:
 - stage: Build
