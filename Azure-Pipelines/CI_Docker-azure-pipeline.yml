@@ -28,21 +28,21 @@ stages:
     displayName: Build and publish artifact
     pool:
       vmImage: ubuntu-latest
-    # steps:
-    # - task: Docker@2
-    #   displayName: 'Build and push an image to container registry'
-    #   inputs:
-    #     containerRegistry: '$(containerRegistryServiceConnection)'
-    #     repository: '$(imageRepository)'
-    #     command: 'buildAndPush'
-    #     Dockerfile: '**/Dockerfile'
-    #     buildContext: '.'
-    #     tags: '$(tag)'
+    steps:
+    - task: Docker@2
+      displayName: 'Build and push an image to container registry'
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        buildContext: '.'
+        tags: '$(tag)'
         
-    # - task: PublishPipelineArtifact@1
-    #   inputs:
-    #     artifactName: 'Manifests'
-    #     path: 'Koldste.dev.Web/Manifests'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        artifactName: 'Manifests'
+        path: 'Koldste.dev.Web/Manifests'
 
 
 
@@ -61,44 +61,47 @@ stages:
         deploy:
           steps:
 
-          # - task: DownloadPipelineArtifact@2
-          #   inputs:
-          #     artifactName: 'Manifests'
-          #     downloadPath: '$(System.ArtifactsDirectory)/Manifests'
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'Manifests'
+              downloadPath: '$(System.ArtifactsDirectory)/Manifests'
 
-          # - task: KubernetesManifest@1
-          #   displayName: Create imagePullSecret
-          #   inputs:
-          #     action: 'createSecret'
-          #     connectionType: 'kubernetesServiceConnection'
-          #     kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
-          #     namespace: '$(k8sNamespace)'
-          #     secretType: 'dockerRegistry'
-          #     secretName: '$(imagePullSecret)'
-          #     dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+          - task: KubernetesManifest@1
+            displayName: Create imagePullSecret
+            inputs:
+              action: 'createSecret'
+              connectionType: 'kubernetesServiceConnection'
+              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              secretType: 'dockerRegistry'
+              secretName: '$(imagePullSecret)'
+              dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
-          # - script: |
-          #     sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-          #     sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-          #   displayName: 'Replace Docker image name and tag in deployment manifest file'
+          - script: |
+              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+            displayName: 'Replace Docker image name and tag in deployment manifest file'
 
-          # - task: KubernetesManifest@1
-          #   displayName: Deploy to Kubernetes cluster
-          #   inputs:
-          #     action: 'deploy'
-          #     connectionType: 'kubernetesServiceConnection'
-          #     kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
-          #     namespace: '$(k8sNamespace)'
-          #     manifests: |
-          #       $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-          #       $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
-          #     imagePullSecrets: '$(imagePullSecret)'
-          #     rolloutStatusTimeout: '180'
+          - task: KubernetesManifest@1
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: 'deploy'
+              connectionType: 'kubernetesServiceConnection'
+              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              manifests: |
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
+              imagePullSecrets: '$(imagePullSecret)'
+              rolloutStatusTimeout: '180'
               
-          
-          # - task: CmdLine@2
-          #   inputs:
-          #     script: 'docker login registry.digitalocean.com'
 
-          - script: docker login registry.digitalocean.com
-            displayName: 'Docker login'
+
+
+          - script: |
+              kubectl rollout undo deployment/koldstedev --namespace=$(k8sNamespace)
+            displayName: 'Rollback on failure'
+            condition: failed()
+            env:
+              KUBECONFIG: $(kubeconfig)
+
