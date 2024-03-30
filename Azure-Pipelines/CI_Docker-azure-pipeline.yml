@@ -41,11 +41,13 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          #!/bin/bash
+
           retries=20
           seconds_between_retries=20
 
           # Gets active garbage collection
-          for i in {1..$retries}
+          for ((i=1; i<=retries; i++))
           do
             echo "Getting active garbage collection"
             response=$(curl --silent \
@@ -72,7 +74,7 @@ stages:
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
               # 20 second sleep with a loading bar.
-              for i in {1..$seconds_between_retries}
+              for ((i=1; i<=seconds_between_retries; i++))
               do
                 echo -n "."
                 sleep 1
