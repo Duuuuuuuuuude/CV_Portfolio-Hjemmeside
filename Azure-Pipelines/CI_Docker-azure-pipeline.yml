@@ -41,8 +41,11 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          retries=20
+          seconds_between_retries=20
+
           # Gets active garbage collection
-          for i in {1..10}
+          for i in {1..$retries}
           do
             echo "Getting active garbage collection"
             response=$(curl --silent \
@@ -63,22 +66,25 @@ stages:
               echo "Response body: $json_response"
               echo
               exit 0
+
             elif [ $http_status_code -eq 200 ]; then
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
-              echo "Active garbage collection found. Trying again in 10 seconds."
-              # 10 second sleep with a loading bar.
-              for i in {1..10}
+              echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
+              # 20 second sleep with a loading bar.
+              for i in {1..$seconds_between_retries}
               do
                 echo -n "."
                 sleep 1
               done
               echo
+
             else
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
               echo
             fi
+
           done
         failOnStderr: true
 
