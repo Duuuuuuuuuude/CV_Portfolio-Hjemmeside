@@ -29,7 +29,7 @@ stages:
   displayName: Build image
   jobs:
   - job: Build
-    displayName: Build and publish artifact
+    displayName: Build, push and publish artifact
     pool:
       vmImage: ubuntu-latest
     steps:
@@ -108,24 +108,6 @@ stages:
           #   inputs:
           #     dockerVersion: '17.09.0-ce'
 
-          # - script: |
-          #     curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/$(repositoryNameURLEncoded)/tags?per_page=200"
-
-
-          #   doctl registry repository delete-tag 
-          #       web-api-http-prod $(
-          #                     doctl registry repository list-tags web-api-http-prod --output json 
-          #       | jq ".[5:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-5d +%s)) | .tag " 
-          #                     -r | tr '\n' ' ') --force
-
-
-          #     jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-3d +%s)) | .tag" -r | tr '\n' ' '
-          #   displayName: 'Clean up the container registry'
-
-
-
-
-
           - task: Bash@3
             displayName: 'Clean up the container registry'
             inputs:
@@ -137,7 +119,7 @@ stages:
                 min_to_keep=${min_to_keep:-10}
                 delete_days_old=${delete_days_old:-4}
                 verbose=no
-                repository=''
+                repository='azurepipeline/koldste.dev'
                 bearer_token_container_registry=''
                 container_registry_API_base_URL=''
                 repository_name_URL_encoded=''
