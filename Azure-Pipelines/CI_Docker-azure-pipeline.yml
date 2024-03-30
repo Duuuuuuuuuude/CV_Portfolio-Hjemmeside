@@ -98,18 +98,6 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
               rolloutStatusTimeout: '180'
-          
-          # - script: |
-          #     sudo snap install doctl
-          #   displayName: 'Installs latest version of doctl'
-
-
-          # - task: DockerInstaller@0
-          #   inputs:
-          #     dockerVersion: '17.09.0-ce'
-
-
-
 
           - task: Bash@3
             displayName: 'Clean up the container registry'
@@ -125,7 +113,9 @@ stages:
                 bearer_token_container_registry=$(bearerTokenContainerRegistry)
                 container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
                 repository_name_URL_encoded=$(repositoryNameURLEncoded)
+                registry_name=$(registryName)
 
+                # Gets all tags in repository
                 response=$(curl --silent \
                                 --write-out "HTTPSTATUS:%{http_code}" \
                                 -X GET \
@@ -152,13 +142,13 @@ stages:
                 fi
 
                 date_boundary=$(date -d"-$delete_days_old days" +%s)
-                # deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
-                deletable_tags=$(curl --silent \
-                                      -X GET \
-                                      -H "Content-Type: application/json" \
-                                      -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                      ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" \
-                                      | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
+                deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+                # deletable_tags=$(curl --silent \
+                #                       -X GET \
+                #                       -H "Content-Type: application/json" \
+                #                       -H "Authorization: Bearer "$bearer_token_container_registry"" \
+                #                       ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" \
+                #                       | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
 
                 # Check the exit status of jq for errors
                 if [ $? -ne 0 ]; then
@@ -174,7 +164,7 @@ stages:
                   echo "Deleteable tags: $deletable_tags"
                 }
 
-                # Tags being deleted on the images.
+                # Tags being deleted on the images in container registry.
                 for tag in $deletable_tags; do
                   response=$(curl --silent \
                                   --write-out "HTTPSTATUS:%{http_code}" \
@@ -187,10 +177,10 @@ stages:
                   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
                   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
-                  # # Checks the HTTP status error codes
-                  # if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
-                  #   echo "Response body: $json_response"
-                  # fi
+                  # Checks the HTTP status error codes
+                  if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
+                    echo "Response body: $json_response"
+                  fi
 
                   if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
                     echo "Error: HTTP response $http_status"
@@ -199,13 +189,13 @@ stages:
                   fi
                 done
 
-                # This will delete images no longer used and untagged images.
+                # This will run a garbage collection and delete images no longer used and untagged images.
                 response=$(curl --silent \
                                 --write-out "HTTPSTATUS:%{http_code}" \
-                                -X GET \
+                                -X POST \
                                 -H "Content-Type: application/json" \
                                 -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                                ""$container_registry_API_base_URL"/registry/"$repository_name_URL_encoded"/garbage-collection")
+                                ""$container_registry_API_base_URL"/registry/"$registry_name"/garbage-collection")
 
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
