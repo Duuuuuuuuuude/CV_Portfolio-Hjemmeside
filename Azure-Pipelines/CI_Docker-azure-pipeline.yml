@@ -166,8 +166,7 @@ stages:
 
                 # Tags being deleted on the images in container registry.
                 for tag in $deletable_tags; do
-                  response=$(curl --silent \
-                                  --write-out "HTTPSTATUS:%{http_code}" \
+                  response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                                   -X DELETE \
                                   -H "Content-Type: application/json" \
                                   -H "Authorization: Bearer "$bearer_token_container_registry"" \
@@ -183,15 +182,14 @@ stages:
                   fi
 
                   if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
-                    echo "Error: HTTP response $http_status"
+                    echo "Error: HTTP response $http_status \n"
                     echo "Response body: $json_response"
                     exit 1
                   fi
                 done
 
                 # This will run a garbage collection and delete images no longer used and untagged images.
-                response=$(curl --silent \
-                                --write-out "HTTPSTATUS:%{http_code}" \
+                response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                                 -X POST \
                                 -H "Content-Type: application/json" \
                                 -H "Authorization: Bearer "$bearer_token_container_registry"" \
@@ -202,8 +200,8 @@ stages:
                 json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
                 # Checks the HTTP status error codes
-                if [ $http_status -ne 200 ]; then
-                  echo "Error: HTTP response $http_status"
+                if [ $http_status -ne 201 ]; then
+                  echo "Error: HTTP response $http_status \n"
                   echo "Response body: $json_response"
                   exit 1
                 fi
