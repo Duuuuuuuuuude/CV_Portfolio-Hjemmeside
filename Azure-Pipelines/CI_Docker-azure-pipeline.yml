@@ -44,23 +44,23 @@ stages:
           while [ $http_status_code]
           do
             echo "Getting active garbage collection"
-            response=$(curl --writeout "HTTPSTATUS:%{http_code}" \
+            response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
                             -H "Content-Type: application/json" \
-                            -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                            ""$container_registry_API_base_URL"/garbage-collection")
+                            -H "Authorization: Bearer $bearer_token_container_registry" \
+                            "$container_registry_API_base_URL/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
             http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
             json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
             # Checks the HTTP status error codes
-            if [ http_status eq 404]; then
+            if [ $http_status -eq 404]; then
               echo "HTTP status code: $http_status \n"
               echo "No active garbage collection found. Continuing to push image. \n"
               echo "Response body: $json_response"
               exit 0
-            elif [ http_status eq 200 ]
+            elif [ $http_status -eq 200 ]
               echo "HTTP status code: $http_status \n"
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in 10 seconds. \n"
