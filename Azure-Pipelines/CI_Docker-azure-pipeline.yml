@@ -11,7 +11,7 @@ trigger:
 variables:
   tag: 'build-$(Build.BuildId)sha256-$(Build.SourceVersion)'
   containerRegistryServiceConnection: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
-  imageRepository: 'koldste-dev-digitalocean-container-registry/azurePipeline/koldste.dev'
+  imageRepository: 'koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev'
   
   # release pipeline variables
   imagePullSecret: azure-secret-registry-koldste-dev-digitalocean-container-registry
