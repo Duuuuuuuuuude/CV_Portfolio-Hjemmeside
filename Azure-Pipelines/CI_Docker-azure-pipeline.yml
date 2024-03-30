@@ -52,15 +52,15 @@ stages:
                             -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
                             ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
-            # # Separate the JSON response from the HTTP status
-            # http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-            # json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+            # Separate the JSON response from the HTTP status
+            http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
             # Checks the HTTP status error codes
             if [ $http_status_code -eq 404 ]; then
-              # echo "HTTP status code: $http_status_code"
-              # echo "No active garbage collection found. Continuing to push image."
-              # echo "Response body: $json_response"
+              echo "HTTP status code: $http_status_code"
+              echo "No active garbage collection found. Continuing to push image."
+              echo "Response body: $json_response"
               echo
               # exit 0
             elif [ $http_status_code -eq 200 ]; then
