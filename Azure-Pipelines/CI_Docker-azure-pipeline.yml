@@ -101,7 +101,7 @@ stages:
           - script: |
               kubectl rollout undo deployment/koldstedev --namespace=$(k8sNamespace)
             displayName: 'Rollback on failure'
-            condition: failed()
+            # condition: failed()
             env:
               KUBECONFIG: $(kubeconfig)
 
