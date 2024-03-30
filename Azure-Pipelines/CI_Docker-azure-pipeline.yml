@@ -154,8 +154,10 @@ stages:
 
                 # date_boundary=$(date -v-"$delete_days_old"d +%s)
                 date_boundary=$(date -d"-$delete_days_old days" +%s)
-                deletable_tags=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
-      
+                # deletable_tags=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+                deletable_tags=$(curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
+
+
                 [[ -z "$deletable_tags" ]] && {
                   [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
                   exit 0
