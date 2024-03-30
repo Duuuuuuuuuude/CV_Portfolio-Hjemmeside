@@ -190,8 +190,10 @@ stages:
                 fi
 
                 date_boundary=$(date -d"-$delete_days_old days" +%s)
-                deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " -r | tr '\n' ' ')
+                # deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " -r | tr '\n' ' ')
                 # deletable_tags=$(echo $json_response | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
+                deletable_tags=$(echo $json_response | jq -r ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " | tr '\n' ' ')
+
 
                 # Check the exit status of jq for errors
                 if [ $? -ne 0 ]; then
