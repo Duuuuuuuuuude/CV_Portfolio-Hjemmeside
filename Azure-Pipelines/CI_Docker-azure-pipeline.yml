@@ -171,10 +171,10 @@ stages:
                   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
                   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
-                  # Checks the HTTP status error codes
-                  if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
-                    echo "Response body: $json_response"
-                  fi
+                  # # Checks the HTTP status error codes
+                  # if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
+                  #   echo "Response body: $json_response"
+                  # fi
 
                   if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
                     echo "Error: HTTP response $http_status"
