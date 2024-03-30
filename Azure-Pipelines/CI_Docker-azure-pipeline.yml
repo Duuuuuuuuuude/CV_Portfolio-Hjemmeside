@@ -140,7 +140,7 @@ stages:
                 repository=''
                 bearer_token_container_registry=''
                 container_registry_API_base_URL=''
-                repository_name_URL_encoded?''
+                repository_name_URL_encoded=''
       
                 while [ $# -gt 0 ]; do
       
