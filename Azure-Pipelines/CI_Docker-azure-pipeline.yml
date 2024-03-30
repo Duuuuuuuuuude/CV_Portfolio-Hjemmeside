@@ -112,37 +112,32 @@ stages:
             displayName: 'Clean up the container registry'
             inputs:
               targetType: 'inline'
-              arguments: '--repository $(repositoryName) --delete_days_old 3 --min_to_keep 10 --verbose yes --bearer_token_container_registry $(bearerTokenContainerRegistry) --container_registry_API_base_URL $(containerRegistryAPIBaseURL) --repository_name_URL_encoded $(repositoryNameURLEncoded)'
+              arguments: '--delete_days_old 3 --min_to_keep 10 --verbose yes'
               script: |
                 #!/bin/bash
 
                 min_to_keep=${min_to_keep:-10}
                 delete_days_old=${delete_days_old:-4}
                 verbose=no
-                repository=''
-                bearer_token_container_registry=''
-                container_registry_API_base_URL=''
-                repository_name_URL_encoded=''
+                repository=$(repositoryName)
+                bearer_token_container_registry=$(bearerTokenContainerRegistry)
+                container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
+                repository_name_URL_encoded=$(repositoryNameURLEncoded)
       
-                while [ $# -gt 0 ]; do
+                # while [ $# -gt 0 ]; do
       
-                  if [[ $1 == *"--"* ]]; then
-                    param="${1/--/}"
-                    declare "$param"="$2"
-                  fi
+                #   if [[ $1 == *"--"* ]]; then
+                #     param="${1/--/}"
+                #     declare "$param"="$2"
+                #   fi
       
-                  shift
-                done
-
-                [[ -z "$bearer_token_container_registry" ]] && {
-                  echo "Error: You need to define '$repository'"
-                  exit 1
-                }
+                #   shift
+                # done
       
-                [[ -z "$repository" ]] && {
-                  echo "Error: You need to define '--repository'"
-                  exit 1
-                }
+                # [[ -z "$repository" ]] && {
+                #   echo "Error: You need to define '--repository'"
+                #   exit 1
+                # }
 
                 [[ -z "$bearer_token_container_registry" ]] && {
                   echo "Error: You need to define '--bearer_token_container_registry'"
