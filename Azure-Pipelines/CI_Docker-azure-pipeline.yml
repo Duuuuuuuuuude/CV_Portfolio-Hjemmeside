@@ -89,6 +89,16 @@ stages:
               connectionType: 'kubernetesServiceConnection'
               kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
               namespace: '$(k8sNamespace)'
-              manifests: '$(System.ArtifactsDirectory)/Manifests/website-koldstedev/'
+              manifests: |
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
               rolloutStatusTimeout: '180'
+              
+          
+          - task: CmdLine@2
+            inputs:
+              script: 'docker login registry.digitalocean.com'
+
+          - script: docker login registry.digitalocean.com
+            displayName: 'Docker login'
