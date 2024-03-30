@@ -53,8 +53,8 @@ stages:
                             ""$(containerRegistryAPIBaseURL)"/garbage-collection")
                                 
             # Separate the JSON response from the HTTP status
-            http_status_code=(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-            json_response=(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+            http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
             # Checks the HTTP status error codes
             if [ $http_status_code -eq 404 ]; then
