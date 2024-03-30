@@ -61,7 +61,7 @@ stages:
               # echo "HTTP status code: $http_status_code"
               # echo "No active garbage collection found. Continuing to push image."
               # echo "Response body: $json_response"
-              # echo
+              echo
               # exit 0
             elif [ $http_status_code -eq 200 ]; then
               echo "HTTP status code: $http_status_code"
