@@ -64,7 +64,7 @@ stages:
               echo "HTTP status code: $http_status \n"
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in 10 seconds. \n"
-              # Sleep with a loading bar.
+              # 10 second sleep with a loading bar.
               for i in {1..10}
               do
                 echo -n "."
