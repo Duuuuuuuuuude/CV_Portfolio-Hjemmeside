@@ -16,11 +16,13 @@ variables:
   # release pipeline variables
   # - group: Container-Registry-do
 - name: imagePullSecret
-  value: azure-secret-registry-koldste-dev-digitalocean-container-registry
+  value: azure-secret-registry-$(registryName)
 - name: k8sNamespace
   value: backend
 - name: containerRegistryURL
   value: 'registry.digitalocean.com'
+- name: containerRegistryAPIBaseURL
+  value: 'https://api.digitalocean.com/v2/registry/$(registryName)'
 
 stages:
 - stage: Build
@@ -96,7 +98,18 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
               rolloutStatusTimeout: '180'
-              
+          
+          # - script: |
+          #     sudo snap install doctl
+          #   displayName: 'Installs latest version of doctl'
+
+
+          # - task: DockerInstaller@0
+          #   inputs:
+          #     dockerVersion: '17.09.0-ce'
+
           - script: |
-              echo $DOCKER_PASSWORD | docker login $(containerRegistryURL) --username $DOCKER_USERNAME --password-stdin
-            displayName: 'Replace Docker image name and tag in deployment manifest file'
+              curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/azurepipeline%2Fkoldste.dev/tags?per_page=200"
+
+              jq ".[10:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-3d +%s)) | .tag"
+            displayName: 'Clean up the container registry'
