@@ -216,7 +216,8 @@ stages:
 
                 # Tags being deleted on the images in container registry.
                 for tag in $deletable_tags; do
-                  response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
+                  response=$(curl --silent \
+                                  --write-out "HTTPSTATUS:%{http_code}" \
                                   -X DELETE \
                                   -H "Content-Type: application/json" \
                                   -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
@@ -239,7 +240,8 @@ stages:
                 done
 
                 # This will run a garbage collection and delete images no longer used and untagged images.
-                response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
+                response=$(curl --silent \
+                                --write-out "HTTPSTATUS:%{http_code}" \
                                 -X POST \
                                 -H "Content-Type: application/json" \
                                 -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
