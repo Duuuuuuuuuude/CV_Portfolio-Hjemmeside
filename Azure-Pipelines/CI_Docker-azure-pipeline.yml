@@ -126,7 +126,7 @@ stages:
                 container_registry_API_base_URL=$(containerRegistryAPIBaseURL)
                 repository_name_URL_encoded=$(repositoryNameURLEncoded)
 
-                response=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200" | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+                response=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" -H "Authorization: Bearer "$bearer_token_container_registry"" ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags?per_page=200")
 
                 # Separates the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -165,7 +165,7 @@ stages:
                 for tag in $deletable_tags; do
                   response=$(curl--write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
                     -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                    ""$container_registry_API_base_URL"/repositories/$repository_name_URL_encoded"/tags/$tag")
+                    ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
 
                   # Separate the JSON response from the HTTP status
                   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -183,7 +183,7 @@ stages:
                 # This will delete images no longer used and untagged images.
                 response=$(curl --write-out "HTTPSTATUS:%{http_code}" -X GET -H "Content-Type: application/json" \
                   -H "Authorization: Bearer "$bearer_token_container_registry"" \
-                  ""$container_registry_API_base_URL"/registry/$repository_name_URL_encoded/garbage-collection")
+                  ""$container_registry_API_base_URL"/registry/"$repository_name_URL_encoded"/garbage-collection")
 
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
