@@ -47,6 +47,9 @@ stages:
           do
             echo "Getting active garbage collection"
 
+            echo "$(bearerTokenContainerRegistry)"
+            echo ""$(containerRegistryAPIBaseURL)"/garbage-collection"
+
             response=$(curl --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
                             -H "Content-Type: application/json" \
@@ -64,7 +67,6 @@ stages:
               echo "Response body: $json_response"
               echo
               exit 0
-              echo $? #######
             elif [ $http_status_code -eq 200 ]; then
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
@@ -76,16 +78,13 @@ stages:
                 sleep 1
               done
               echo
-              echo $? #######
             else
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
               echo
-              echo $? #######
               exit 1
             fi
           done
-          echo $? #######
         failOnStderr: true
 
     - task: Docker@2
