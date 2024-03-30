@@ -163,7 +163,7 @@ stages:
 
                 # Tags being deleted on the images.
                 for tag in $deletable_tags; do
-                  response=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
+                  response=$(curl --write-out "HTTPSTATUS:%{http_code}" -X DELETE -H "Content-Type: application/json" \
                     -H "Authorization: Bearer "$bearer_token_container_registry"" \
                     ""$container_registry_API_base_URL"/repositories/"$repository_name_URL_encoded"/tags/$tag")
 
