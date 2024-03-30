@@ -46,7 +46,7 @@ stages:
           while [ $http_status_code -eq 404 ]
           do
             echo "Getting active garbage collection"
-            response=$(curl --silent \ 
+            response=$(curl --silent \
                             --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
                             -H "Content-Type: application/json" \
