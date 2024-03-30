@@ -109,7 +109,7 @@ stages:
           #     dockerVersion: '17.09.0-ce'
 
           - script: |
-              curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/azurepipeline%2Fkoldste.dev/tags?per_page=200"
+              curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $(bearerTokenContainerRegistry)" "$(containerRegistryAPIBaseURL)/repositories/$(repositoryNameURLEncoded)/tags?per_page=200"
 
               jq ".[10:] | .[] | select ( .updated_at | fromdateiso8601 < $(date -v-3d +%s)) | .tag"
             displayName: 'Clean up the container registry'
