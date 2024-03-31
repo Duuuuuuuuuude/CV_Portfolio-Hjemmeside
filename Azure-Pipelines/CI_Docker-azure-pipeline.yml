@@ -122,7 +122,6 @@ stages:
         targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
-        properties: 'Manifests'
 
 
 
