@@ -74,12 +74,13 @@ stages:
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
               # 20 second sleep with a loading bar.
-              for ((i=1; i<=seconds_between_retries; i++))
-              do
-                stdbuf -o0 echo -n "."
-                sleep 1
-              done
-              echo
+              # for ((i=1; i<=seconds_between_retries; i++))
+              echo -ne '#####                     (33%)\r'
+              sleep 1
+              echo -ne '#############             (66%)\r'
+              sleep 1
+              echo -ne '#######################   (100%)\r'
+              echo -ne '\n'
 
             else
               echo "HTTP status code: $http_status_code"
