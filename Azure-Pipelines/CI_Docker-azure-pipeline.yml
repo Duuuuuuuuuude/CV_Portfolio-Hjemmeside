@@ -10,10 +10,10 @@ resources:
 
 variables:
 - group: Container-Registry-do
-- name: containerRegistryServiceConnection
-  value: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
-- name: registryName
-  value: koldste-dev-digitalocean-container-registry
+# - name: containerRegistryServiceConnection
+#   value: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+# - name: registryName
+#   value: koldste-dev-digitalocean-container-registry
 
   # release pipeline variables
   # - group: Container-Registry-do
@@ -36,6 +36,8 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
+    # Build and push are not part of the same task, and seperated by a garbage collection check,
+    # to lower the chanch of an active garbage collection starting between the garbage collection check and the push.
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
@@ -46,11 +48,8 @@ stages:
         buildContext: '.'
         tags: '$(tag)'
 
-    - script: |
-        docker images
-      displayName: 'List Docker images'
-
-
+    # Imaged can't be pushed when there is an active garbage collection running, 
+    # this will not let the push happen until after the garbage collection is finished, if there is one.
     - task: Bash@3
       displayName: 'Waits for the garbage collection to be done, if necessary'
       inputs:
@@ -106,10 +105,6 @@ stages:
           done
         failOnStderr: true
 
-    - script: |
-        docker images
-      displayName: 'List Docker images'
-
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
       inputs:
@@ -134,8 +129,10 @@ stages:
         
     - task: PublishPipelineArtifact@1
       inputs:
-        artifactName: 'Manifests'
-        path: 'Koldste.dev.Web/Manifests'
+        targetPath: 'Koldste.dev.Web/Manifests'
+        artifact: 'Manifests'
+        publishLocation: 'pipeline'
+        properties: 'Manifests'
 
 
 
@@ -188,110 +185,14 @@ stages:
               imagePullSecrets: '$(imagePullSecret)'
               rolloutStatusTimeout: '180'
 
-########## ROLLBACK HERE
-
-
-
+########## ROLLBACK GOES HERE
+      
           - task: Bash@3
             displayName: 'Clean up the container registry'
             inputs:
               targetType: 'inline'
               script: |
-                #!/bin/bash
 
-                min_to_keep=10
-                delete_days_old=3
-                verbose=yes
-
-                # Gets all tags in repository
-                response=$(curl --silent \
-                                --write-out "HTTPSTATUS:%{http_code}" \
-                                -X GET \
-                                -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                                ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags?per_page=200")
-
-                # Separates the JSON response from the HTTP status
-                http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-                json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
-
-                # Checks the HTTP status code and exits if the HTTP request failed. Also prints out the json body, if it failed and message if there was nothing to delete
-                if [ $http_status -eq 404 ]; then
-                    echo "Error: HTTP response $http_status"
-                fi
-
-                if [ $http_status -eq 404 ] && [[ "$verbose" == "yes" ]]; then
-                    echo "Nothing to delete"
-                    exit 0
-                elif [ $http_status -ne 200 ]; then
-                    echo "Error: HTTP response $http_status"
-                    echo "Response body: $json_response"
-                    exit 1
-                fi
-
-                date_boundary=$(date -d"-$delete_days_old days" +%s)
-                # deletable_tags=$(echo $json_response | jq ".tags[] | .[10:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " -r | tr '\n' ' ')
-                # deletable_tags=$(echo $json_response | jq ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tail -n +11 | tr '\n' ' ')
-                deletable_tags=$(echo $json_response | jq -r ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " | tr '\n' ' ')
-
-
-                # Check the exit status of jq for errors
-                if [ $? -ne 0 ]; then
-                    echo "Error: jq command failed"
-                    exit 1
-                fi
-      
-                [[ "$verbose" == "yes" ]] && {
-                  echo "DELETING images in the container registry, that are more than $delete_days_old days"
-                  echo "While KEEPING at least $min_to_keep of the newest images in the container registry"
-                  echo ""
-                  echo "Tags from the images being deleted:"
-                  echo "Deleteable tags: $deletable_tags"
-                }
-
-                # Tags being deleted on the images in container registry.
-                for tag in $deletable_tags; do
-                  response=$(curl --silent \
-                                  --write-out "HTTPSTATUS:%{http_code}" \
-                                  -X DELETE \
-                                  -H "Content-Type: application/json" \
-                                  -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                                  ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags/$tag")
-
-                  # Separate the JSON response from the HTTP status
-                  http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-                  json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
-
-                  # Checks the HTTP status error codes
-                  if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
-                    echo "Response body: $json_response"
-                  fi
-
-                  if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
-                    echo "Error: HTTP response $http_status"
-                    echo "Response body: $json_response"
-                    exit 1
-                  fi
-                done
-
-                # This will run a garbage collection and delete images no longer used and untagged images.
-                response=$(curl --silent \
-                                --write-out "HTTPSTATUS:%{http_code}" \
-                                -X POST \
-                                -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                                ""$(containerRegistryAPIBaseURL)"/garbage-collection")
-                                
-                # Separate the JSON response from the HTTP status
-                http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-                json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
-
-                # Checks the HTTP status error codes
-                if [ $http_status -ne 201 ]; then
-                  echo "Error: HTTP response $http_status"
-                  echo "Response body: $json_response"
-                  exit 1
-                fi
               failOnStderr: true
 
 
