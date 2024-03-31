@@ -10,7 +10,8 @@ resources:
 - repo: self
 
 variables:
-  tag: '$(Build.BuildId)'
+- group: Container-Registry-do
+- name: containerRegistryServiceConnection
 
 stages:
 - stage: Build
@@ -98,13 +99,15 @@ stages:
         repository: '$(imageRepository)'
         command: 'push'
         tags: '$(tag)'
-        arguments: './output'
 
+    - script: |
+        docker images
+      displayName: 'List Docker images'
+        
     - task: PublishPipelineArtifact@1
-      displayName: "Publish Pipeline Artifact"
       inputs:
-        targetPath: '$(Pipeline.Workspace)/output'
-        artifact: '.DockerOutput'
+        targetPath: 'Koldste.dev.Web/Manifests'
+        artifact: 'Manifests'
         publishLocation: 'pipeline'
 
 # Release pipeline moved to the release page of Azure DevOps
