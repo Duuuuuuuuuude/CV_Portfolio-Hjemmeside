@@ -80,22 +80,23 @@ stages:
               for number in $(seq 1 $_end)
               do
                 # Process data
-                let _progress=($number*100/$_end*100)/100
-                let _done=($_progress*4)/10
-                let _left=40-$_done
+                _progress=$((number*100/$_end))
+                _done=$((_progress*4/10))
+                _left=$((40-_done))
                 # Build progressbar string lengths
                 _fill=$(printf "%${_done}s")
                 _empty=$(printf "%${_left}s")
                 printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
 
                 # Calculate next start time
-                _start=$(($_start + 1))
+                _start=$((_start + 1))
                 _now=$(date +%s)
                 if ((_now < _start)); then
-                  sleep $((_start - _now))
+                  /bin/bash -c "sleep $((_start - _now))"
                 fi
               done
 
+            echo
 
             else
               echo "HTTP status code: $http_status_code"
