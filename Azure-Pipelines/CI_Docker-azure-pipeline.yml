@@ -50,6 +50,7 @@ stages:
           for ((i=1; i<=retries; i++))
           do
             echo "Getting active garbage collection"
+            echo
             response=$(curl --silent \
                             --write-out "HTTPSTATUS:%{http_code}" \
                             -X GET \
@@ -78,6 +79,7 @@ stages:
               do
                 sleep 1
               done
+              echo
               echo
 
             else
