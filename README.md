@@ -1,1 +1,4 @@
+![](https://vsrm.dev.azure.com/MartinKoldste/_apis/public/Release/badge/7117b8dd-35b2-4579-98f7-0b9c9ef7810d/2/2)
+![example workflow](https://github.com/Duuuuuuuuuude/CV_Portfolio-Hjemmeside/actions/workflows/build-and-publish-to-public-GitHub-Registry.yml/badge.svg?branch=main)
+
 Hjemmesiden er stadig meget ny og under udvikling, så forvent lidt fejl. Den nuværende udgave  kan besøges [her](koldste.dev), hvis ikke serveren er i gang med at blive konfigureret. I tilfælde af at siden er midlertidligt nede, kan det seneste Docker image hentes her: `docker pull ghcr.io/duuuuuuuuuude/cv_portfolio-hjemmeside:latest`.
