@@ -74,40 +74,24 @@ stages:
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
               
-              # # Spinner
-              # sp='/-\|'
-              # printf ' '
-              # while true; do
-              #   printf '\b%.1s' "$sp"
-              #   sp=${sp#?}${sp%???}
-              # done
-              
+              # 20 second sleep with a loading bar.
               progress-bar 100
-
               progress-bar() {
                 local duration=${1}
 
-                  already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }
-                  remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do printf " "; done }
-                  percentage() { printf "| %s%%" $(( (($elapsed)*100)/($duration)*100/100 )); }
-                  clean_line() { printf "\r"; }
+                already_done() { for ((done=0; done<$elapsed; done++)); do echo -n "▇"; done }
+                remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do echo -n " "; done }
+                percentage() { echo -n "| $(( (($elapsed)*100)/($duration)*100/100 ))%"; }
+                clean_line() { echo -en "\r"; }
 
                 for (( elapsed=1; elapsed<=$duration; elapsed++ )); do
-                  already_done; remaining; percentage
+                    already_done; remaining; percentage
                     sleep 1
                     clean_line
                 done
-                clean_line
+                echo
               }
 
-              # 20 second sleep with a loading bar.
-              for ((j=1; j<=seconds_between_retries; j++))
-              do
-                stdbuf -o0 printf "."
-                sleep 1
-              done
-              printf "\n"
-              
             else
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
