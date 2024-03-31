@@ -72,25 +72,11 @@ stages:
             elif [ $http_status_code -eq 200 ]; then
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
-              echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
+              echo "Can't push image, when there is an active garbage collection running. Trying again in $seconds_between_retries seconds."
               
-              # 20 second sleep with a loading bar.
-              progress-bar() {
-                local duration=${1}
-
-                already_done() { for ((done=0; done<$elapsed; done++)); do stdbuf -o0 echo -n "▇"; done }
-                remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do stdbuf -o0 echo -n " "; done }
-                countdown() { stdbuf -o0 echo -n "| $(( $duration - $elapsed )) seconds remaining"; }
-                clean_line() { stdbuf -o0 echo -en "\r"; }
-
-                for (( elapsed=1; elapsed<=$duration; elapsed++ )); do
-                    already_done; remaining; countdown
-                    sleep 1
-                    clean_line
-                done
-                echo
-              }
-
+              for ((j=1; j<=seconds_between_retries; j++))
+                sleep 1
+              done
 
             else
               echo "HTTP status code: $http_status_code"
