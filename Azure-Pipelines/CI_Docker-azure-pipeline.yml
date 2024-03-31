@@ -85,7 +85,7 @@ stages:
               # 20 second sleep with a loading bar.
               for ((j=1; j<=seconds_between_retries; j++))
               do
-                printf "."
+                stdbuf -o0 printf "."
                 sleep 1
               done
               printf "\n"
