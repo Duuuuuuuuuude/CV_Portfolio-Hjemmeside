@@ -75,13 +75,13 @@ stages:
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
               
               # 20 second sleep with a loading bar.
-              progress-bar 100
+              progress-bar 20
               progress-bar() {
                 local duration=${1}
 
                 already_done() { for ((done=0; done<$elapsed; done++)); do stdbuf -o0 echo -n "▇"; done }
                 remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do stdbuf -o0 echo -n " "; done }
-                percentage() { stdbuf -o0 echo -n "| $(( (($elapsed)*100)/($duration)*100/100 ))%"; }
+                percentage() { stdbuf -o0 echo -n "| $(( (($elapsed)*100)/($duration)*100/100 ))seconds"; }
                 clean_line() { stdbuf -o0 echo -en "\r"; }
 
                 for (( elapsed=1; elapsed<=$duration; elapsed++ )); do
