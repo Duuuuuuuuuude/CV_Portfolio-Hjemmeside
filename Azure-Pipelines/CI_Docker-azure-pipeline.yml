@@ -4,6 +4,7 @@
 
 trigger:
 - main
+- Development
 
 resources:
 - repo: self
