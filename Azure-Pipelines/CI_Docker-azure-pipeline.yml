@@ -116,16 +116,6 @@ stages:
     - script: |
         docker images
       displayName: 'List Docker images'
-
-    # - task: Docker@2
-    #   displayName: 'Build and push an image to container registry'
-    #   inputs:
-    #     containerRegistry: '$(containerRegistryServiceConnection)'
-    #     repository: '$(imageRepository)'
-    #     command: 'buildAndPush'
-    #     Dockerfile: '**/Dockerfile'
-    #     buildContext: '.'
-    #     tags: '$(tag)'
         
     - task: PublishPipelineArtifact@1
       inputs:
@@ -133,6 +123,11 @@ stages:
         artifact: 'Manifests'
         publishLocation: 'pipeline'
         properties: 'Manifests'
+
+
+
+
+
 
 
 
