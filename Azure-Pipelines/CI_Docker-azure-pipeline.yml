@@ -75,7 +75,7 @@ stages:
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
 
               # 20 second sleep with a loading bar.
-              end=$1
+              end=$20
               for number in $(seq 1 $_end)
               do
                 sleep 1
