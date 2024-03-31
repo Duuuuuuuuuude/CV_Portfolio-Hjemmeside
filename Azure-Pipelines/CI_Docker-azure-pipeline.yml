@@ -10,21 +10,15 @@
 
 # variables:
 # - group: Container-Registry-do
+# - group: Kubernetes-Cluster-do
 # # - name: containerRegistryServiceConnection
 # #   value: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 # # - name: registryName
 # #   value: koldste-dev-digitalocean-container-registry
 
-#   # release pipeline variables
-#   # - group: Container-Registry-do
-# - name: imagePullSecret
-#   value: azure-secret-registry-$(registryName)
-# - name: k8sNamespace
-#   value: backend
-# - name: containerRegistryURL
-#   value: 'registry.digitalocean.com'
-# - name: containerRegistryAPIBaseURL
-#   value: 'https://api.digitalocean.com/v2/registry/$(registryName)'
+  # release pipeline variables
+  # - group: Container-Registry-do
+  # - group: Kubernetes-Cluster-do
 
 # stages:
 # - stage: Build
