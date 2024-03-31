@@ -74,13 +74,13 @@ stages:
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
               
-              # Spinner
-              sp='/-\|'
-              printf ' '
-              while true; do
-                printf '\b%.1s' "$sp"
-                sp=${sp#?}${sp%???}
-              done
+              # # Spinner
+              # sp='/-\|'
+              # printf ' '
+              # while true; do
+              #   printf '\b%.1s' "$sp"
+              #   sp=${sp#?}${sp%???}
+              # done
 
               # 20 second sleep with a loading bar.
               for ((j=1; j<=seconds_between_retries; j++))
