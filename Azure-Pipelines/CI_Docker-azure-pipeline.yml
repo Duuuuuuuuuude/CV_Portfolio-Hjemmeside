@@ -75,17 +75,18 @@ stages:
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
 
               # 20 second sleep with a loading bar.
-              for number in $(seq ${1 ${_end})
+              end=$1
+              for number in $(seq 1 $_end)
               do
                 sleep 1
                 # Process data
-                let _progress=($${number}*100/$_end*100)/100
-                let _done=(${_progress}*4)/10
+                let _progress=($number*100/$_end*100)/100
+                let _done=($_progress*4)/10
                 let _left=40-$_done
                 # Build progressbar string lengths
                 _fill=$(printf "%${_done}s")
                 _empty=$(printf "%${_left}s")
-                 printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
+                printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
               done
 
             else
