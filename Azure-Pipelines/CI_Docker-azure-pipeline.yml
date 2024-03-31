@@ -78,10 +78,9 @@ stages:
               for ((i=1; i<=seconds_between_retries; i++))
               do
                 echo -n "."
-                sleep 100
+                sleep 1
               done
-
-            echo
+              echo
 
             else
               echo "HTTP status code: $http_status_code"
