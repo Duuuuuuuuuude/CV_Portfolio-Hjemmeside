@@ -85,11 +85,11 @@ stages:
               # 20 second sleep with a loading bar.
               for ((j=1; j<=seconds_between_retries; j++))
               do
-                echo -ne "."
+                printf "."
                 sleep 1
               done
-              echo
-
+              printf "\n"
+              
             else
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
