@@ -78,6 +78,7 @@ stages:
               end=$20
               for number in $(seq 1 $_end)
               do
+                which sleep
                 sleep 1s
                 # Process data
                 let _progress=($number*100/$_end*100)/100
