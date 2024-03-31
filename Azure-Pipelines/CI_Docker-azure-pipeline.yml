@@ -44,6 +44,11 @@ stages:
         buildContext: '.'
         tags: '$(tag)'
 
+    - script: |
+        docker images
+      displayName: 'List Docker images'
+
+
     - task: Bash@3
       displayName: 'Waits for the garbage collection to be done, if necessary'
       inputs:
@@ -99,6 +104,10 @@ stages:
           done
         failOnStderr: true
 
+    - script: |
+        docker images
+      displayName: 'List Docker images'
+
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
       inputs:
@@ -106,6 +115,10 @@ stages:
         repository: '$(imageRepository)'
         command: 'push'
         tags: '$(tag)'
+
+    - script: |
+        docker images
+      displayName: 'List Docker images'
 
     # - task: Docker@2
     #   displayName: 'Build and push an image to container registry'
