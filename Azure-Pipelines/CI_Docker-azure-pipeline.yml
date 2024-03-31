@@ -36,6 +36,14 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
+    - task: Docker@2
+      displayName: 'Building Docker image'
+      inputs:
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        buildContext: '.'
+        tags: '$(tag)'
+
     - task: Bash@3
       displayName: 'Waits for the garbage collection to be done, if necessary'
       inputs:
@@ -92,14 +100,22 @@ stages:
         failOnStderr: true
 
     - task: Docker@2
-      displayName: 'Build and push an image to container registry'
+      displayName: 'Pushing the image to the container registry'
       inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
+        containerRegistry: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
         repository: '$(imageRepository)'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        buildContext: '.'
+        command: 'push'
         tags: '$(tag)'
+
+    # - task: Docker@2
+    #   displayName: 'Build and push an image to container registry'
+    #   inputs:
+    #     containerRegistry: '$(containerRegistryServiceConnection)'
+    #     repository: '$(imageRepository)'
+    #     command: 'buildAndPush'
+    #     Dockerfile: '**/Dockerfile'
+    #     buildContext: '.'
+    #     tags: '$(tag)'
         
     - task: PublishPipelineArtifact@1
       inputs:
