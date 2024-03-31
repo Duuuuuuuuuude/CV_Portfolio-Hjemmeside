@@ -1,0 +1,113 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+- Development
+
+resources:
+- repo: self
+
+variables:
+- group: Container-Registry-do
+- name: containerRegistryServiceConnection
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build, push and publish artifact
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+
+    # Build and push are not part of the same task, and seperated by a garbage collection check,
+    # to lower the chanch of an active garbage collection starting between the garbage collection check and the push.
+    - task: Docker@2
+      displayName: 'Building Docker image'
+      inputs:
+        containerRegistry: $(containerRegistryServiceConnection)
+        repository: '$(imageRepository)'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        buildContext: '.'
+        tags: '$(tag)'
+
+    # Imaged can't be pushed when there is an active garbage collection running, 
+    # this will not let the push happen until after the garbage collection is finished, if there is one.
+    - task: Bash@3
+      displayName: 'Waits for the garbage collection to be done, if necessary'
+      inputs:
+        targetType: 'inline'
+        script: |
+          #!/bin/bash
+
+          retries=20
+          seconds_between_retries=20
+
+          # Gets active garbage collection
+          for ((i=1; i<=retries; i++))
+          do
+            echo "Getting active garbage collection"
+            echo
+            response=$(curl --silent \
+                            --write-out "HTTPSTATUS:%{http_code}" \
+                            -X GET \
+                            -H "Content-Type: application/json" \
+                            -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
+                            ""$(containerRegistryAPIBaseURL)"/garbage-collection")
+                                
+            # Separate the JSON response from the HTTP status
+            http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+
+            # Checks the HTTP status error codes
+            if [ $http_status_code -eq 404 ]; then
+              echo "HTTP status code: $http_status_code"
+              echo "No active garbage collection found. Continuing to image push task."
+              echo "Response body: $json_response"
+              echo
+              exit 0
+
+            elif [ $http_status_code -eq 200 ]; then
+              echo "HTTP status code: $http_status_code"
+              echo "Response body: $json_response"
+              echo "Can't push image when there is an active garbage collection running. Trying again in $seconds_between_retries seconds."
+              
+              for ((j=1; j<=seconds_between_retries; j++))
+              do
+                sleep 1
+              done
+              echo
+              echo
+
+            else
+              echo "HTTP status code: $http_status_code"
+              echo "Response body: $json_response"
+              echo
+            fi
+
+          done
+        failOnStderr: true
+
+    - task: Docker@2
+      displayName: 'Pushing the image to the container registry'
+      inputs:
+        containerRegistry: '@(containerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
+
+    - script: |
+        docker images
+      displayName: 'List Docker images'
+        
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'Koldste.dev.Web/Manifests'
+        artifact: 'Manifests'
+        publishLocation: 'pipeline'
+
+# Release pipeline moved to the release page of Azure DevOps
