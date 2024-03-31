@@ -73,14 +73,20 @@ stages:
               echo "HTTP status code: $http_status_code"
               echo "Response body: $json_response"
               echo "Active garbage collection found. Trying again in $seconds_between_retries seconds."
+
               # 20 second sleep with a loading bar.
-              # for ((i=1; i<=seconds_between_retries; i++))
-              echo -ne '#####                     (33%)\r'
-              sleep 1
-              echo -ne '#############             (66%)\r'
-              sleep 1
-              echo -ne '#######################   (100%)\r'
-              echo -ne '\n'
+              for number in $(seq ${1 ${_end})
+              do
+                sleep 1
+                # Process data
+                let _progress=($${number}*100/$_end*100)/100
+                let _done=(${_progress}*4)/10
+                let _left=40-$_done
+                # Build progressbar string lengths
+                _fill=$(printf "%${_done}s")
+                _empty=$(printf "%${_left}s")
+                 printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
+              done
 
             else
               echo "HTTP status code: $http_status_code"
