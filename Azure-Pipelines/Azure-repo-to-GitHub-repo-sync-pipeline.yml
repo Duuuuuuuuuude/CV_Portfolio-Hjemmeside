@@ -19,16 +19,16 @@ variables:
 steps:
 # Installing Python
 - task: UsePythonVersion@0
+  displayName: Installing Python
   inputs:
     versionSpec: '3.x'
     addToPath: true
 
 - task: PowerShell@2
+  displayName: Syncing azure repo to github repo.
   inputs:
     targetType: 'inline'
     script: |
-      # Syncing azure repo to github repo.
-
       ####################################################
       $stageDir = '$(Build.SourcesDirectory)' | Split-Path
             
@@ -97,7 +97,7 @@ steps:
       #############################################
             
       Write-Output '*****Git removing remote secondary****'
-      git remote rm secondary
+      git remote rm main
       
       Write-Output '*****Git remote add****'
       git remote add --mirror=fetch secondary $destURL
