@@ -10,7 +10,10 @@ resources:
   pipelines:
   - pipeline: CINETazurepipeline
     source: CI_.NET-azure-pipeline
-    trigger: true
+    trigger:
+      branches:
+        exclude:
+          - '*'
 
 pool:
   vmImage: ubuntu-latest
