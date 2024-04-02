@@ -2,16 +2,22 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-- main
-- Development
-
+### THIS PIPELINE RUNS SECOND AND AFTER THE "CI_.NET-azure-pipeline" PIPELINE ###
 resources:
-- repo: self
+
+  repositories:
+  - repository: repo
+    type: git
+    name: CV_Portfolio-Hjemmeside
+    ref: self
+    
+  pipelines:
+  - pipeline: CIDotNETazurepipeline
+    source: CI_.NET-azure-pipeline
+    trigger: true
 
 variables:
 - group: Container-Registry-do
-- name: containerRegistryServiceConnection
 
 stages:
 - stage: Build
