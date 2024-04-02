@@ -10,7 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\koldste.dev.Common\appsettings.Development.json" Link="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\koldste.dev.Common\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\koldste.dev.Common\appsettings.Production.json" Link="appsettings.Production.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
