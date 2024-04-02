@@ -116,5 +116,3 @@ stages:
         targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
-
-# Release pipeline moved to the release page of Azure DevOps
