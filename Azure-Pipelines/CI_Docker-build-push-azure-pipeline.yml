@@ -52,6 +52,9 @@ stages:
       inputs:
         filePath: 'Azure-Pipelines/Bash Scripts/Image Push Retention - Wait For The Garbage Collection To Be Done.sh'
         failOnStderr: true
+      env:
+        bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
+        containerRegistryAPIBaseURL: $(containerRegistryAPIBaseURL)
 
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
@@ -70,3 +73,15 @@ stages:
         targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
+
+    - script: |
+        echo $(System.AccessToken) | az devops login
+        if [ "$(Agent.JobStatus)" == "Succeeded" ]; then
+          az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+        fi
+
+        az devops logout
+      displayName: 'Trigger CD_Docker-Deploy-pipeline'
+      env:
+        System.AccessToken: $(System.AccessToken)
+

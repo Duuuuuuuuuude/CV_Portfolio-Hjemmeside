@@ -9,8 +9,8 @@ response=$(curl --silent \
                 --write-out "HTTPSTATUS:%{http_code}" \
                 -X GET \
                 -H "Content-Type: application/json" \
-                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags?per_page=200")
+                -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                ""$containerRegistryAPIBaseURL"/repositories/"$repositoryNameURLEncoded"/tags?per_page=200")
 
 # Separates the JSON response from the HTTP status
 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -54,8 +54,8 @@ for tag in $deletable_tags; do
                   --write-out "HTTPSTATUS:%{http_code}" \
                   -X DELETE \
                   -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                  ""$(containerRegistryAPIBaseURL)"/repositories/"$(repositoryNameURLEncoded)"/tags/$tag")
+                  -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                  ""$containerRegistryAPIBaseURL"/repositories/"$repositoryNameURLEncoded"/tags/$tag")
 
   # Separate the JSON response from the HTTP status
   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -78,8 +78,8 @@ done
                                 --write-out "HTTPSTATUS:%{http_code}" \
                                 -X POST \
                                 -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                                ""$(containerRegistryAPIBaseURL)"/garbage-collection")
+                                -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                                ""$containerRegistryAPIBaseURL"/garbage-collection")
                                 
                 # Separate the JSON response from the HTTP status
                 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')

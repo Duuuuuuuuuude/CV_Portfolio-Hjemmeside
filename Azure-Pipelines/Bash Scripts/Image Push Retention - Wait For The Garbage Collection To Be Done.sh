@@ -12,8 +12,8 @@ do
                     --write-out "HTTPSTATUS:%{http_code}" \
                     -X GET \
                     -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer "$(bearerTokenContainerRegistry)"" \
-                    ""$(containerRegistryAPIBaseURL)"/garbage-collection")
+                    -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                    ""$containerRegistryAPIBaseURL"/garbage-collection")
                                 
     # Separate the JSON response from the HTTP status
     http_status_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')

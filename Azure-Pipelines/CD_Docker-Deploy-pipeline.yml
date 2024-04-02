@@ -82,3 +82,7 @@ stages:
       inputs:
         filePath: 'Azure-Pipelines\Bash Scripts\Docker Container Registry Clean Up.sh'
         failOnStderr: true
+      env:
+        bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
+        containerRegistryAPIBaseURL: $(containerRegistryAPIBaseURL)
+        repositoryNameURLEncoded: $(repositoryNameURLEncoded)
