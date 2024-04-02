@@ -14,7 +14,10 @@ resources:
   pipelines:
   - pipeline: CIplaywrightazurepipeline
     source: CI_playwright-azure-pipeline
-    trigger: true
+    trigger:
+      branches:
+        exclude:
+          - '*'
 
 variables:
 - group: Container-Registry-do
