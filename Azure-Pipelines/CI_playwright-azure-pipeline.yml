@@ -1,4 +1,4 @@
-### THIS PIPELINE RUNS THIRD AND AFTER THE "CI_Docker-build-push-azure-pipeline" PIPELINE ###
+### THIS PIPELINE RUNS SECOND AND AFTER THE "CI_.NET-azure-pipeline" PIPELINE ###
 resources:
 
   repositories:
@@ -8,8 +8,8 @@ resources:
     ref: self
     
   pipelines:
-  - pipeline: CIDockerbuildpushazurepipeline
-    source: CI_Docker-build-push-azure-pipeline
+  - pipeline: CINETazurepipeline
+    source: CI_.NET-azure-pipeline
     trigger: true
 
 pool:
