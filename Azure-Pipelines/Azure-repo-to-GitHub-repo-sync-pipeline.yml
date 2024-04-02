@@ -115,3 +115,5 @@ steps:
       {
         Remove-Item -Path $githubDir -Recurse -force
       }
+    failOnStderr: true
+    showWarnings: true
