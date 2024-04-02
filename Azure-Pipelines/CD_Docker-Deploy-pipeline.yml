@@ -1,0 +1,95 @@
+### THIS PIPELINE RUNS FOURTH AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
+resources:
+
+  repositories:
+  - repository: repo
+    type: git
+    name: CV_Portfolio-Hjemmeside
+    ref: main
+    
+  pipelines:
+  - pipeline: CIplaywrightazurepipeline
+    source: CI_playwright-azure-pipeline
+    trigger: 
+      branches:
+        include:
+        - main
+
+variables:
+- group: Container-Registry-do
+
+stages:
+- stage: Deploy
+  displayName: Deploy stage
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy job
+    pool:
+      vmImage: ubuntu-latest
+    environment: koldstedev-do-kubernetes
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              buildType: 'specific'
+              project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
+              definition: '25'
+              buildVersionToDownload: 'latestFromBranch'
+              branchName: 'main'
+              artifactName: 'Manifests'
+              targetPath: '$(System.ArtifactsDirectory)/Manifests'
+
+          - task: KubernetesManifest@1
+            displayName: Create imagePullSecret
+            inputs:
+              action: 'createSecret'
+              connectionType: 'kubernetesServiceConnection'
+              # kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              secretType: 'dockerRegistry'
+              secretName: '$(imagePullSecret)'
+
+          - script: |
+              # Uncomments the image property.
+              sed -i "s|{{# image:}}|image:" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+
+              # Sets the name of the image property.
+              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+
+              # Replaces the imager property value's placeholder.
+              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+            displayName: 'Replace Docker image name and tag in deployment manifest file'
+
+          - task: KubernetesManifest@1
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: 'deploy'
+              connectionType: 'kubernetesServiceConnection'
+              # kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              manifests: |
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+                $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
+              imagePullSecrets: '$(imagePullSecret)'
+              rolloutStatusTimeout: '180'
+
+########## ROLLBACK GOES HERE
+
+- stage: Clean_up
+  displayName: Deploy stage
+  dependsOn: Deploy
+  condition: succeeded('Deploy')
+  jobs:
+  - job: deploy
+    displayName: Deploy job
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Bash@3
+      displayName: 'Clean up the container registry'
+      inputs:
+        filePath: 'Azure-Pipelines\Bash Scripts\Docker Container Registry Clean Up.sh'
+        failOnStderr: true
