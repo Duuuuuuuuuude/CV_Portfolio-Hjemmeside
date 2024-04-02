@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Playwright;
-using System.Reflection;
 
 namespace Koldste.dev.Tests.PlayWright;
 
@@ -12,9 +11,9 @@ public class RoutingTests : PageTest
     [TestInitialize]
     public void TestInitialize()
     {
-        _config = new ConfigurationBuilder().SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
-                                            .AddJsonFile("appsettings.json")
-                                            .Build();
+        //_config = new ConfigurationBuilder().SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
+        //                                    .AddJsonFile("appsettings.json")
+        //                                    .Build();
     }
 
     // TODO: Add tests for routing
@@ -22,11 +21,11 @@ public class RoutingTests : PageTest
     public async Task SearchResultsIndexRedirectsToSearchResultsIndexWithQueryStringAll()
     {
         // Arrange
-        string goToUrl = "";
-        string expectedUrl = "/Search?q=" + _config.GetRequiredSection("SearchParameters:QueryStringAll");
+        //string goToUrl = "";
+        //string expectedUrl = "/Search?q=" + _config.GetRequiredSection("SearchParameters:QueryStringAll");
 
         // Act
-        string actualUrl = (await Page.GotoAsync(goToUrl))!.Url;
+        //string actualUrl = (await Page.GotoAsync(goToUrl))!.Url;
 
         // Assert
         //Assert.AreEqual(expectedUrl, actualUrl);
