@@ -1,25 +1,16 @@
 ### THIS PIPELINE RUNS FOURTH/LAST AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
-resources:
 
-  repositories:
-  - repository: repo
-    type: git
-    name: CV_Portfolio-Hjemmeside
-    ref: main
-    
-  pipelines:
-  - pipeline: CIDockerbuildpushazurepipeline
-    source: CI_Docker-build-push-azure-pipeline
-    trigger: 
-      branches:
-        include:
-        - main
+trigger: none
+
+resources:
+- repo: self
 
 variables:
 - group: Container-Registry-do
 
 stages:
 - stage: Deploy
+  
   displayName: Deploy stage
   jobs:
   - deployment: Deploy
