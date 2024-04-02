@@ -2,7 +2,7 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-### THIS PIPELINE RUNS SECOND AND AFTER THE "CI_.NET-azure-pipeline" PIPELINE ###
+### THIS PIPELINE RUNS THIRD AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
 resources:
 
   repositories:
@@ -12,8 +12,8 @@ resources:
     ref: self
     
   pipelines:
-  - pipeline: CIDotNETazurepipeline
-    source: CI_.NET-azure-pipeline
+  - pipeline: CIplaywrightazurepipeline
+    source: CI_playwright-azure-pipeline
     trigger: true
 
 variables:
