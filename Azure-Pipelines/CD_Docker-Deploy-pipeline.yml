@@ -35,7 +35,7 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'specific'
-              project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
+              project: Koldste.dev
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
               branchName: 'main'
