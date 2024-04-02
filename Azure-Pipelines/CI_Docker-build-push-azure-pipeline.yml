@@ -70,3 +70,9 @@ stages:
         targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
+
+    - script: |
+        if [ "$(Agent.JobStatus)" == "Succeeded" ]; then
+          az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+        fi
+      displayName: 'Trigger CD_Docker-Deploy-pipeline'
