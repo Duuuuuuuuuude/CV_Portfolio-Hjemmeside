@@ -21,7 +21,6 @@ resources:
 
 variables:
 - group: Container-Registry-do
-- name: containerRegistryServiceConnection
 
 stages:
 - stage: Build
