@@ -56,7 +56,7 @@ stages:
     - task: Bash@3
       displayName: 'Waits for the garbage collection to be done, if necessary'
       inputs:
-        filePath: 'Azure-Pipelines/Bash Scripts/Image Push Retention - Wait For The Garbage Collection To Be Done'
+        filePath: 'Azure-Pipelines/Bash Scripts/Image Push Retention - Wait For The Garbage Collection To Be Done.sh'
         failOnStderr: true
 
     - task: Docker@2
