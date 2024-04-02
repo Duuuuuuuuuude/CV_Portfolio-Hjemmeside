@@ -34,7 +34,7 @@ stages:
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
-        containerRegistry: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
+        # containerRegistry: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
         repository: '$(imageRepository)'
         command: 'build'
         Dockerfile: '**/Dockerfile'
