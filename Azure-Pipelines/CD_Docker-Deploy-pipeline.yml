@@ -1,4 +1,4 @@
-### THIS PIPELINE RUNS FOURTH AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
+### THIS PIPELINE RUNS FOURTH/LAST AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
 resources:
 
   repositories:
@@ -8,8 +8,8 @@ resources:
     ref: main
     
   pipelines:
-  - pipeline: CIplaywrightazurepipeline
-    source: CI_playwright-azure-pipeline
+  - pipeline: CIDockerbuildpushazurepipeline
+    source: CI_Docker-build-push-azure-pipeline
     trigger: 
       branches:
         include:

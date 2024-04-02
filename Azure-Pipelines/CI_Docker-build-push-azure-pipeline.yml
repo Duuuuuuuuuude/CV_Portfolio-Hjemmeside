@@ -2,12 +2,19 @@
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-- main
-- Development
-
+### THIS PIPELINE RUNS THIRD AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
 resources:
-- repo: self
+
+  repositories:
+  - repository: repo
+    type: git
+    name: CV_Portfolio-Hjemmeside
+    ref: main
+    
+  pipelines:
+  - pipeline: CIplaywrightazurepipeline
+    source: CI_playwright-azure-pipeline
+    trigger: true
 
 variables:
 - group: Container-Registry-do
