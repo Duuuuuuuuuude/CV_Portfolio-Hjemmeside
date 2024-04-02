@@ -9,7 +9,7 @@ resources:
   - repository: repo
     type: git
     name: CV_Portfolio-Hjemmeside
-    ref: self
+    ref: main
     
   pipelines:
   - pipeline: CIplaywrightazurepipeline
