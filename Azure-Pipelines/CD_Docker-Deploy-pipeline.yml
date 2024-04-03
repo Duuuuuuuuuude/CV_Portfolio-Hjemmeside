@@ -26,9 +26,10 @@ stages:
           - task: DownloadBuildArtifacts@1
             inputs:
               buildType: 'specific'
-              project: $(project)
+              project: '$(project)'
               pipeline: '25'
-              buildVersionToDownload: 'latest'
+              buildVersionToDownload: 'latestFromBranch'
+              branchName: 'main'
               downloadType: 'single'
               artifactName: 'Manifests'
               downloadPath: '$(System.ArtifactsDirectory)'
