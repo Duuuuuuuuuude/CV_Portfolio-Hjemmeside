@@ -23,15 +23,15 @@ stages:
         deploy:
           steps:
 
-          - task: DownloadPipelineArtifact@2
+          - task: DownloadBuildArtifacts@1
             inputs:
               buildType: 'specific'
-              project: Koldste.dev
-              definition: '25'
-              buildVersionToDownload: 'latestFromBranch'
-              branchName: 'main'
+              project: $(project)
+              pipeline: '25'
+              buildVersionToDownload: 'latest'
+              downloadType: 'single'
               artifactName: 'Manifests'
-              targetPath: '$(System.ArtifactsDirectory)/Manifests'
+              downloadPath: '$(System.ArtifactsDirectory)'
 
           - task: KubernetesManifest@1
             displayName: Create imagePullSecret
