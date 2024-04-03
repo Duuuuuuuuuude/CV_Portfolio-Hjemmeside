@@ -29,7 +29,7 @@ stages:
               project: 'Koldste.dev'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'main'
+              branchName: 'Artifact_trigger_test'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)'
 
