@@ -7,7 +7,6 @@ resources:
 
 variables:
 - group: Container-Registry-do
-- name: BuildId
 
 stages:
 - stage: Deploy
@@ -29,8 +28,8 @@ stages:
               buildType: 'specific'
               project: 'Koldste.dev'
               definition: '25'
-              buildVersionToDownload: 'specific'
-              pipelineId: '$(BuildId)'
+              buildVersionToDownload: 'latestFromBranch'
+              branchName: 'main'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)'
 
