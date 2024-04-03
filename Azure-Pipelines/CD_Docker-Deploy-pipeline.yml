@@ -26,12 +26,13 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'specific'
-              project: Koldste.dev
+              project: 'Koldste.dev'
               definition: '25'
+              specificBuildWithTriggering: true
               buildVersionToDownload: 'latestFromBranch'
               branchName: 'main'
               artifactName: 'Manifests'
-              targetPath: '$(System.ArtifactsDirectory)/Manifests'
+              targetPath: '$(System.ArtifactsDirectory)'
 
           - task: KubernetesManifest@1
             displayName: Create imagePullSecret
