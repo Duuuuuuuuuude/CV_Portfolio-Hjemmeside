@@ -75,8 +75,8 @@ stages:
 
     - script: |
         echo $(System.AccessToken) | az devops login
-        if [ "$(Agent.JobStatus)" == "Succeeded" ]; then
-          az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+          if [ "$(Agent.JobStatus)" == "Succeeded" ] && [ "$(Build.SourceBranchName)" == "main" ]; then
+          az pipelines run --name CD_Docker-Deploy-pipeline --branch Artifact_trigger_test
         fi
 
         az devops logout
