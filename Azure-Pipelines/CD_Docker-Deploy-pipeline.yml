@@ -38,6 +38,7 @@ stages:
             inputs:
               action: 'createSecret'
               connectionType: 'kubernetesServiceConnection'
+              kubernetesServiceConnection: $(kubernetesServiceConnection)
               namespace: '$(k8sNamespace)'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
