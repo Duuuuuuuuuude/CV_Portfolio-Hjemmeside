@@ -28,6 +28,7 @@ stages:
               buildType: 'specific'
               project: 'Koldste.dev'
               definition: '25'
+              specificBuildWithTriggering: true
               buildVersionToDownload: 'latestFromBranch'
               branchName: 'Artifact_trigger_test'
               artifactName: 'Manifests'
