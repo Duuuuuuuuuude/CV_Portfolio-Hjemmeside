@@ -28,9 +28,8 @@ stages:
               buildType: 'specific'
               project: 'Koldste.dev'
               definition: '25'
-              specificBuildWithTriggering: true
-              buildVersionToDownload: 'latestFromBranch'
-              branchName: 'main'
+              buildVersionToDownload: 'specific'
+              pipelineId: '$(BuildId)'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)'
 
