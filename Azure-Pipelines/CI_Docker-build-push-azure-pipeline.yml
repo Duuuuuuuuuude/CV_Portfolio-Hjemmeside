@@ -3,21 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 ### THIS PIPELINE RUNS THIRD AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
-resources:
+trigger: none
 
-  repositories:
-  - repository: repo
-    type: git
-    name: CV_Portfolio-Hjemmeside
-    ref: main
-    
-  pipelines:
-  - pipeline: CIplaywrightazurepipeline
-    source: CI_playwright-azure-pipeline
-    trigger:
-      branches:
-        exclude:
-          - '*'
+resources:
+- repo: self
 
 variables:
 - group: Container-Registry-do
@@ -75,12 +64,9 @@ stages:
 
     - script: |
         echo $(System.AccessToken) | az devops login
-          if [ "$(Agent.JobStatus)" == "Succeeded" ] && [ "$(Build.SourceBranchName)" == "main" ]; then
-          az pipelines run --name CD_Docker-Deploy-pipeline --branch Artifact_trigger_test
-        fi
+
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch main
 
         az devops logout
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
       displayName: 'Trigger CD_Docker-Deploy-pipeline'
-      env:
-        System.AccessToken: $(System.AccessToken)
-
