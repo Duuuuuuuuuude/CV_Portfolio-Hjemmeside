@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 ### THIS PIPELINE RUNS THIRD AND AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
-trigger: none
+trigger: none # Trigger is located at the bottom of this pipeline.
 
 resources:
 - repo: self
@@ -62,6 +62,7 @@ stages:
         artifact: 'Manifests'
         publishLocation: 'pipeline'
 
+
     - script: |
         echo $(System.AccessToken) | az devops login
 
@@ -69,4 +70,4 @@ stages:
 
         az devops logout
       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
-      displayName: 'Trigger CD_Docker-Deploy-pipeline'
+      displayName: 'Trigger for CD_Docker-Deploy-pipeline'
