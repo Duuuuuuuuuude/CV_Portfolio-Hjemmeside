@@ -1,19 +1,8 @@
 ### THIS PIPELINE RUNS SECOND AND AFTER THE "CI_.NET-azure-pipeline" PIPELINE ###
-resources:
+trigger: none # Trigger is located at the bottom of this pipeline.
 
-  repositories:
-  - repository: repo
-    type: git
-    name: CV_Portfolio-Hjemmeside
-    ref: main
-    
-  pipelines:
-  - pipeline: CINETazurepipeline
-    source: CI_.NET-azure-pipeline
-    trigger:
-      branches:
-        exclude:
-          - '*'
+resources:
+- repo: self
 
 pool:
   vmImage: ubuntu-latest
@@ -30,3 +19,14 @@ steps:
   displayName: 'Build'
 - script: dotnet test --configuration Release
   displayName: 'Run tests'
+
+
+- script: |
+    echo $(System.AccessToken) | az devops login
+
+    az pipelines run --name CI_Docker-build-push-azure-pipeline --branch $(Build.SourceBranchName)
+
+    az devops logout
+        
+  condition: succeeded()
+  displayName: 'Trigger for CI_Docker-build-push-azure-pipeline'
