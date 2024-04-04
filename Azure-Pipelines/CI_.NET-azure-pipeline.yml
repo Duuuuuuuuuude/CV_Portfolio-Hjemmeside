@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
 ### THIS PIPELINE RUNS FIRST ###
-trigger:
+trigger: # Another trigger is located at the bottom of this pipeline.
 - main
 - Development
 
@@ -34,3 +34,14 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+
+- script: |
+    echo $(System.AccessToken) | az devops login
+
+    az pipelines run --name CI_playwright-azure-pipeline --branch $(Build.SourceBranchName)
+
+    az devops logout
+        
+  condition: succeeded()
+  displayName: 'Trigger for CI_playwright-azure-pipeline'
