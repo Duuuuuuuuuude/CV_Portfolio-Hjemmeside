@@ -1,6 +1,5 @@
 ### THIS PIPELINE RUNS FOURTH/LAST AFTER THE "CI_playwright-azure-pipeline" PIPELINE ###
-
-trigger: none
+trigger: none # Should only be triggered by a pipeline that publishes the Manifest artifact.
 
 resources:
 - repo: self
