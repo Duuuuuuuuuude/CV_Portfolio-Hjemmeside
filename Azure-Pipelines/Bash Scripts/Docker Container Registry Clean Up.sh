@@ -31,8 +31,7 @@ elif [ $http_status -ne 200 ]; then
 fi
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
-deletable_tags=$(echo $json_response | jq -r ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag | .[10:] " | tr '\n' ' ')
-
+deletable_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | fromdateiso8601 < $date_boundary) | .tag" | jq -r '.['$min_to_keep':] | join(" ")')
 
 # Check the exit status of jq for errors
 if [ $? -ne 0 ]; then
