@@ -30,13 +30,12 @@ elif [ $http_status -ne 200 ]; then
 fi
 
 
-echo $json_response | jq -r ".tags[]" # SLET
+# echo $json_response | jq -r ".tags[]" # SLET
 
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 # Get all tags
-all_tags=$(echo $json_response | jq -r ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag")
-
+all_tags=$(echo $json_response | jq ".[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Get the number of tags
 # num_tags=$(echo $all_tags | jq '. | length')
@@ -46,7 +45,7 @@ num_tags=$(echo $all_tags | jq -s 'split(" ") | length')
 # Check if there are at least min_to_keep tags
 if (( num_tags > min_to_keep )); then
   # Get all tags except the first min_to_keep
-  deletable_tags=$(echo $all_tags | jq -r '.['$min_to_keep':] | join(" ")')
+  deletable_tags=$(echo $all_tags | .[$min_to_keep:])
 else
   echo "There are fewer than $min_to_keep tags. No tags will be deleted."
   exit 0
