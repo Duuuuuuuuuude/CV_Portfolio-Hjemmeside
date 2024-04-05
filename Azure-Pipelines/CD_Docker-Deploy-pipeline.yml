@@ -42,7 +42,7 @@ stages:
               project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'artifact_publish_development'
+              branchName: 'refs/heads/artifact_publish_development'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
