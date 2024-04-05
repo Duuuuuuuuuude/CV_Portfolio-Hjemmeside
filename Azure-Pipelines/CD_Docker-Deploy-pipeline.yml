@@ -4,20 +4,6 @@ trigger: none # Should only be triggered by a pipeline that publishes the Manife
 resources:
 - repo: self
 
-  # repositories:
-  #   - repository: repo
-  #     type: git
-  #     name: CV_Portfolio-Hjemmeside
-  #     ref: artifact_publish_development
-    
-  # pipelines:
-  #   - pipeline: CIDockerbuildpushazurepipeline
-  #     source: CI_Docker-build-push-azure-pipeline
-  #     trigger: 
-  #       branches:
-  #         include:
-  #         - artifact_publish_development
-
 variables: 
 - group: Container-Registry-do
 
