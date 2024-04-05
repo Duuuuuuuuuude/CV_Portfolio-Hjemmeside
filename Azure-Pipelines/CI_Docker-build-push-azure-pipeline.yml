@@ -11,7 +11,7 @@ resources:
 variables:
 - group: Container-Registry-do
 
-stages:
+stages: 
 - stage: Build
   displayName: Build image
   jobs:
