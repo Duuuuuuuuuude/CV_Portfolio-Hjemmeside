@@ -2,7 +2,21 @@
 trigger: none # Should only be triggered by a pipeline that publishes the Manifest artifact.
 
 resources:
-- repo: self
+# - repo: self
+
+  repositories:
+    - repository: repo
+      type: git
+      name: CV_Portfolio-Hjemmeside
+      ref: artifact_publish_development
+    
+  pipelines:
+    - pipeline: CIDockerbuildpushazurepipeline
+      source: CI_Docker-build-push-azure-pipeline
+      trigger: 
+        branches:
+          include:
+          - artifact_publish_development
 
 variables:
 - group: Container-Registry-do
@@ -21,6 +35,16 @@ stages:
       runOnce:
         deploy:
           steps:
+
+          # - task: DownloadPipelineArtifact@2
+          #   inputs:
+          #     buildType: 'specific'
+          #     project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
+          #     definition: '25'
+          #     buildVersionToDownload: 'latestFromBranch'
+          #     branchName: 'main'
+          #     artifactName: 'Manifests'
+          #     targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
           - task: DownloadPipelineArtifact@2
             inputs:
