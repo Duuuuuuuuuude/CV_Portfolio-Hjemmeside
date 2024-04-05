@@ -102,7 +102,7 @@ for digest in $deletable_digests; do
     echo "Response body: $json_response"
   fi
 
-  if [ $http_status -ne 204 ] && [ $http_status -ne 404]; then
+  if [ $http_status -ne 204 ] && [ $http_status -ne 404 ]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
     exit 1
