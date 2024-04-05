@@ -32,7 +32,8 @@ fi
 
 # echo $json_response | jq -r ".tags[]" # SLET
 
-date_boundary=$(date -v-"$delete_days_old"d +%s)
+
+date_boundary=$(date -d-"$delete_days_old days" +%s)
 deletable_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Check the exit status of jq for errors
