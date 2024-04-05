@@ -45,6 +45,7 @@ fi
 
 [[ -z "$deletable_tags" ]] && {
   [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
+  run_garbage_collection
   exit 0
 }
       
@@ -82,23 +83,28 @@ for tag in $deletable_tags; do
   fi
 done
 
-# This will run a garbage collection and delete images no longer used and untagged digest.
-response=$(curl --silent \
-                --write-out "HTTPSTATUS:%{http_code}" \
-                -X POST \
-                -H "Content-Type: application/json" \
-                -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
-                ""$containerRegistryAPIBaseURL"/garbage-collection")
+run_garbage_collection
 
-echo ""$containerRegistryAPIBaseURL"/garbage-collection"
+run_garbage_collection() {
+  echo 'Activating garbage collection.'
+  # This will run a garbage collection and delete images no longer used and untagged digest.
+  response=$(curl --silent \
+                  --write-out "HTTPSTATUS:%{http_code}" \
+                  -X POST \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                  ""$containerRegistryAPIBaseURL"/garbage-collection")
+
+  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
                                 
-# Separate the JSON response from the HTTP status
-http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+  # Separate the JSON response from the HTTP status
+  http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
-# Checks the HTTP status error codes
-if [ $http_status -ne 201 ]; then
-  echo "Error: HTTP response $http_status"
-  echo "Response body: $json_response"
-  exit 1
-fi
+  # Checks the HTTP status error codes
+  if [ $http_status -ne 201 ]; then
+    echo "Error: HTTP response $http_status"
+    echo "Response body: $json_response"
+    exit 1
+  fi
+}
