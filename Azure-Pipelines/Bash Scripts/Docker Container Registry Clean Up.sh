@@ -36,20 +36,20 @@ fi
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 
-all_tags=$(echo $json_response | jq ".[:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+all_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Convert the space-separated tags into a bash array
-all_tags_array=($all_tags)
+#all_tags_array=($all_tags)
 
-num_tags=${#all_tags_array[@]}
+#num_tags=${#all_tags_array[@]}
 
-if (( num_tags > min_to_keep )); then
+#if (( num_tags > min_to_keep )); then
   # Get all tags except the first min_to_keep
-  deletable_tags=${all_tags_array[@]:$min_to_keep}
-else
-  echo "There are fewer than $min_to_keep tags. No tags will be deleted."
-  exit 0
-fi
+#  deletable_tags=${all_tags_array[@]:$min_to_keep}
+#else
+#  echo "There are fewer than $min_to_keep tags. No tags will be deleted."
+#  exit 0
+#fi
 
 
 
