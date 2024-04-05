@@ -58,7 +58,7 @@ stages:
         
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'Koldste.dev.Web/Manifests'
+        targetPath: '$(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
 
