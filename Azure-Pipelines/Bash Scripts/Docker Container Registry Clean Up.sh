@@ -23,7 +23,6 @@ if [ $http_status -eq 404 ]; then
       echo "Nothing to delete"
     fi
     exit 0
-fi
 elif [ $http_status -ne 200 ]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
