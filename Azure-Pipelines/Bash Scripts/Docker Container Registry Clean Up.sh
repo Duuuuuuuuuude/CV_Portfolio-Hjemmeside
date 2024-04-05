@@ -16,14 +16,15 @@ run_garbage_collection() {
                   -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
                   ""$containerRegistryAPIBaseURL"/garbage-collection")
 
-  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
-  echo "Error: HTTP response $http_status"
-  echo "Response body: $json_response"
 
   # Separate the JSON response from the HTTP status
   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
+  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
+  echo "Error: HTTP response $http_status"
+  echo "Response body: $json_response"
+  
   # Checks the HTTP status error codes
   if [ $http_status -ne 201 ]; then
     echo "Error: HTTP response $http_status"
