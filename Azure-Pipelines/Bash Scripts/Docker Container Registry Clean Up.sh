@@ -30,7 +30,7 @@ elif [ $http_status -ne 200 ]; then
 fi
 
 
-echo $json_response | jq -r ".tags[].updated_at" # SLET
+echo $json_response | jq -r ".tags[]" # SLET
 
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
