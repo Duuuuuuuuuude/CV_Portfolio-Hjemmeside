@@ -97,7 +97,7 @@ for digest in $deletable_digests; do
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
   # Checks the HTTP status error codes
-  if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
+  if [$http_status -eq 404 ] && [[ "$verbose" == "yes" ]]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
   fi
