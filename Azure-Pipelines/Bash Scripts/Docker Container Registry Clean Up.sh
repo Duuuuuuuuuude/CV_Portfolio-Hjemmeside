@@ -30,36 +30,21 @@ elif [ $http_status -ne 200 ]; then
     exit 1
 fi
 
-
 # echo $json_response | jq -r ".tags[]" # SLET
 
-
-date_boundary=$(date -d"-$delete_days_old days" +%s)
-
-#deletable_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | strptime(\"%Y-%m-%dT%H:%M:%SZ\"))| .tag " -r | tr '\n' ' ')
-deletable_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | strptime(\"%Y-%m-%dT%H:%M:%SZ\") | mktime < $date_boundary) | .tag " -r | tr '\n' ' ')
-
-# Convert the space-separated tags into a bash array
-#all_tags_array=($all_tags)
-
-#num_tags=${#all_tags_array[@]}
-
-#if (( num_tags > min_to_keep )); then
-  # Get all tags except the first min_to_keep
-#  deletable_tags=${all_tags_array[@]:$min_to_keep}
-#else
-#  echo "There are fewer than $min_to_keep tags. No tags will be deleted."
-#  exit 0
-#fi
-
-
-
+date_boundary=$(date -v-"$delete_days_old"d +%s)
+deletable_tags=$(doctl registry repository list-tags "$repository" --output json | jq ".[5:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Check the exit status of jq for errors
 if [ $? -ne 0 ]; then
     echo "Error: jq command failed"
     exit 1
 fi
+
+[[ -z "$deletable_tags" ]] && {
+  [[ "$verbose" == "yes" ]] && echo "Nothing to delete"
+  exit 0
+}
       
 [[ "$verbose" == "yes" ]] && {
   echo "DELETING images in the container registry, that are more than $delete_days_old days"
