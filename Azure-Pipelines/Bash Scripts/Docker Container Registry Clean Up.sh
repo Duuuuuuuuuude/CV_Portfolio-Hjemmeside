@@ -5,6 +5,32 @@ min_to_keep=10
 delete_days_old=3
 verbose=yes
 
+
+run_garbage_collection() {
+  echo 'Activating garbage collection.'
+  # This will run a garbage collection and delete images no longer used and untagged digest.
+  response=$(curl --silent \
+                  --write-out "HTTPSTATUS:%{http_code}" \
+                  -X POST \
+                  -H "Content-Type: application/json" \
+                  -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                  ""$containerRegistryAPIBaseURL"/garbage-collection")
+
+  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
+                                
+  # Separate the JSON response from the HTTP status
+  http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+
+  # Checks the HTTP status error codes
+  if [ $http_status -ne 201 ]; then
+    echo "Error: HTTP response $http_status"
+    echo "Response body: $json_response"
+    exit 1
+  fi
+}
+
+
 # Gets all tags in repository
 response=$(curl --silent \
                 --write-out "HTTPSTATUS:%{http_code}" \
@@ -84,27 +110,3 @@ for tag in $deletable_tags; do
 done
 
 run_garbage_collection
-
-run_garbage_collection() {
-  echo 'Activating garbage collection.'
-  # This will run a garbage collection and delete images no longer used and untagged digest.
-  response=$(curl --silent \
-                  --write-out "HTTPSTATUS:%{http_code}" \
-                  -X POST \
-                  -H "Content-Type: application/json" \
-                  -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
-                  ""$containerRegistryAPIBaseURL"/garbage-collection")
-
-  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
-                                
-  # Separate the JSON response from the HTTP status
-  http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
-
-  # Checks the HTTP status error codes
-  if [ $http_status -ne 201 ]; then
-    echo "Error: HTTP response $http_status"
-    echo "Response body: $json_response"
-    exit 1
-  fi
-}
