@@ -31,6 +31,11 @@ elif [ $http_status -ne 200 ]; then
 fi
 
 # echo $json_response | jq -r ".tags[]" # SLET
+if ! [[ $min_to_keep =~ ^[0-9]+$ ]]
+then
+    echo "Error: min_to_keep is not a number" >&2
+    exit 1
+fi
 
 
 date_boundary=$(date -d-"$delete_days_old days" +%s)
