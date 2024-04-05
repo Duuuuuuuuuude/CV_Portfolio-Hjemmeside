@@ -35,7 +35,7 @@ echo $json_response | jq -r ".tags[]" # SLET
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 # Get all tags
-all_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | fromdateiso8601 < $date_boundary) | .tag")
+all_tags=$(echo $json_response | jq -r ".tags[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag")
 
 
 # Get the number of tags
