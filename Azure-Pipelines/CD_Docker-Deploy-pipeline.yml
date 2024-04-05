@@ -22,16 +22,15 @@ stages:
         deploy:
           steps:
 
-          - task: DownloadBuildArtifacts@1
+          - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'specific'
-              project: '$(project)'
-              pipeline: '25'
+              project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
+              definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'main'
-              downloadType: 'single'
+              branchName: 'artifact_publish_development'
               artifactName: 'Manifests'
-              downloadPath: '$(System.ArtifactsDirectory)'
+              targetPath: '$(Pipeline.Workspace)'
 
           - task: KubernetesManifest@1
             displayName: Create imagePullSecret
