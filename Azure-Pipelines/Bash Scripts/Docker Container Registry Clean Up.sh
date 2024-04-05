@@ -1,4 +1,5 @@
 #!/bin/bash
+# Inspired by: https://laimis.medium.com/net-web-apps-on-digitalocean-85f0c3acd57f
 
 min_to_keep=10
 delete_days_old=3
@@ -34,22 +35,23 @@ fi
 
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
-# Get all tags
+
 all_tags=$(echo $json_response | jq ".[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
-# Get the number of tags
-# num_tags=$(echo $all_tags | jq '. | length')
-num_tags=$(echo $all_tags | jq -s 'split(" ") | length')
+# Convert the space-separated tags into a bash array
+all_tags_array=($all_tags)
 
+num_tags=${#all_tags_array[@]}
 
-# Check if there are at least min_to_keep tags
 if (( num_tags > min_to_keep )); then
   # Get all tags except the first min_to_keep
-  deletable_tags=$(echo $all_tags | .[$min_to_keep:])
+  deletable_tags=${all_tags_array[@]:$min_to_keep}
 else
   echo "There are fewer than $min_to_keep tags. No tags will be deleted."
   exit 0
 fi
+
+
 
 
 # Check the exit status of jq for errors
