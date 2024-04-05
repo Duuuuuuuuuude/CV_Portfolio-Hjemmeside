@@ -43,17 +43,6 @@ stages:
               secretName: '$(imagePullSecret)'
               dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
-          - script: |
-              # Uncomments the image property.
-              sed -i "s|# image:|image:|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-
-              # Sets the name of the image property.
-              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-
-              # Replaces the imager property value's placeholder.
-              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
-            displayName: 'Replace Docker image name and tag in deployment manifest file'
-
           - task: KubernetesManifest@1
             displayName: Deploy to Kubernetes cluster
             inputs:
