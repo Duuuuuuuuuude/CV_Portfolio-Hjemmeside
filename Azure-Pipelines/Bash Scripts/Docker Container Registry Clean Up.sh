@@ -33,7 +33,7 @@ fi
 # echo $json_response | jq -r ".tags[]" # SLET
 
 date_boundary=$(date -v-"$delete_days_old"d +%s)
-deletable_tags=$(doctl registry repository list-tags "$repository" --output json | jq ".[5:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+deletable_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Check the exit status of jq for errors
 if [ $? -ne 0 ]; then
