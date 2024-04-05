@@ -1,5 +1,5 @@
 #!/bin/bash
-# Inspired by: https://laimis.medium.com/net-web-apps-on-digitalocean-85f0c3acd57f
+# https://laimis.medium.com/net-web-apps-on-digitalocean-85f0c3acd57f
 
 min_to_keep=10
 delete_days_old=3
@@ -30,12 +30,10 @@ elif [ $http_status -ne 200 ]; then
     exit 1
 fi
 
-# echo $json_response | jq -r ".tags[]" # SLET
-echo "$json_response" | jq # SLET
-
+# echo $json_response | jq -r ".tags[]" # DEBUG CODE
+# echo "$json_response" | jq # DEBUG CODE
 
 date_boundary=$(date -d-"$delete_days_old days" +%s)
-#deletable_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 deletable_tags=$(echo $json_response | jq ".tags[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
 # Check the exit status of jq for errors
