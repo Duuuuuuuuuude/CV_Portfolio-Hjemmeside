@@ -59,13 +59,13 @@ stages:
 
           - script: |
               # Uncomments the image property.
-              sed -i "s|{{# image:}}|image:" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+              sed -i "s|{{# image:}}|image:" $(System.ArtifactsDirectory)/Manifests/Manifests/website-koldstedev/Deployment_koldstedev.yaml
 
               # Sets the name of the image property.
-              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+              sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.ArtifactsDirectory)/Manifests/Manifests/website-koldstedev/Deployment_koldstedev.yaml
 
               # Replaces the imager property value's placeholder.
-              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+              sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.ArtifactsDirectory)/Manifests/Manifests/website-koldstedev/Deployment_koldstedev.yaml
             displayName: 'Replace Docker image name and tag in deployment manifest file'
 
           - task: KubernetesManifest@1
