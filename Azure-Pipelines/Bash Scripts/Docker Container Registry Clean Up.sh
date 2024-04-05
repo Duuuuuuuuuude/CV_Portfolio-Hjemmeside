@@ -21,10 +21,6 @@ run_garbage_collection() {
   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
-  echo ""$containerRegistryAPIBaseURL"/garbage-collection"
-  echo "Error: HTTP response $http_status"
-  echo "Response body: $json_response"
-
   # Checks the HTTP status error codes
   if [ $http_status -ne 201 ]; then
     echo "Error: HTTP response $http_status"
@@ -80,10 +76,10 @@ fi
 }
       
 [[ "$verbose" == "yes" ]] && {
-  echo "DELETING images in the container registry, that are more than $delete_days_old days"
+  echo "DELETING images in the container registry, that are more than $delete_days_old days old"
   echo "While KEEPING at least $min_to_keep of the newest images in the container registry"
   echo ""
-  echo "Deleteable tags: $deletable_digests"
+  echo "Deleteable digests: $deletable_digests"
   echo ""
 }
 
