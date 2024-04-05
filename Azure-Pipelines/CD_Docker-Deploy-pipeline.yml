@@ -51,10 +51,11 @@ stages:
             inputs:
               action: 'createSecret'
               connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: $(kubernetesServiceConnection)
+              kubernetesServiceConnection: '$(kubernetesServiceConnection)'
               namespace: '$(k8sNamespace)'
               secretType: 'dockerRegistry'
               secretName: '$(imagePullSecret)'
+              dockerRegistryEndpoint: 'azure_pipeline/DigitalOcean-ContainerRegistry/koldste.dev'
 
           - script: |
               # Uncomments the image property.
