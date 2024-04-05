@@ -32,7 +32,7 @@ fi
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 # Get all tags
-all_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | strptime(\"%Y-%m-%dT%H:%M:%SZ\") | mktime < $date_boundary) | .tag")
+all_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | fromdateiso8601 < $date_boundary) | .tag")
 
 # Get the number of tags
 num_tags=$(echo $all_tags | jq '. | length')
