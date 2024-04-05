@@ -37,8 +37,11 @@ date_boundary=$(date -d"-$delete_days_old days" +%s)
 # Get all tags
 all_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | fromdateiso8601 < $date_boundary) | .tag")
 
+
 # Get the number of tags
-num_tags=$(echo $all_tags | jq '. | length')
+# num_tags=$(echo $all_tags | jq '. | length')
+num_tags=$(echo $all_tags | jq -s 'split(" ") | length')
+
 
 # Check if there are at least min_to_keep tags
 if (( num_tags > min_to_keep )); then
