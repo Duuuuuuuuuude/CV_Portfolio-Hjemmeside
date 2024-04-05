@@ -79,7 +79,7 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
-              rolloutStatusTimeout: '180'
+              # rolloutStatusTimeout: '180'
 
 ########## ROLLBACK GOES HERE
 
