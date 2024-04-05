@@ -11,7 +11,7 @@ response=$(curl --silent \
                 -H "Content-Type: application/json" \
                 -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
                 ""$containerRegistryAPIBaseURL"/repositories/"$repositoryNameURLEncoded"/tags?per_page=200")
-echo ""$containerRegistryAPIBaseURL"/repositories/"$repositoryNameURLEncoded"/tags?per_page=200"
+
 # Separates the JSON response from the HTTP status
 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
@@ -19,11 +19,11 @@ json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 # Checks the HTTP status code and exits if the HTTP request failed. Also prints out the json body, if it failed and message if there was nothing to delete
 if [ $http_status -eq 404 ]; then
     echo "Error: HTTP response $http_status"
+    if [[ "$verbose" == "yes" ]]; then
+      echo "Nothing to delete"
+    fi
+    exit 0
 fi
-
-if [ $http_status -eq 404 ] && [[ "$verbose" == "yes" ]]; then
-    echo "Nothing to delete"
-                    exit 0
 elif [ $http_status -ne 200 ]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
