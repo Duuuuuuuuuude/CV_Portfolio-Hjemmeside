@@ -29,6 +29,10 @@ elif [ $http_status -ne 200 ]; then
     exit 1
 fi
 
+
+echo $json_response | jq -r ".tags[].updated_at" # SLET
+
+
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 # Get all tags
 all_tags=$(echo $json_response | jq -r ".tags[] | select(.updated_at | fromdateiso8601 < $date_boundary) | .tag")
