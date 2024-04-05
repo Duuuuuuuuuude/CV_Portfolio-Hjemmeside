@@ -36,7 +36,7 @@ fi
 
 date_boundary=$(date -d"-$delete_days_old days" +%s)
 
-all_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
+all_tags=$(echo $json_response | jq ".[$min_to_keep:] | .[] | select ( .updated_at | strptime(\"%Y-%m-%dT%H:%M:%SZ\")| .tag " -r | tr '\n' ' ')
 
 # Convert the space-separated tags into a bash array
 #all_tags_array=($all_tags)
