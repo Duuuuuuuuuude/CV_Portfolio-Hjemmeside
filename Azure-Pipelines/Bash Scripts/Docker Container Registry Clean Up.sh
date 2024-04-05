@@ -53,8 +53,8 @@ fi
   echo "DELETING images in the container registry, that are more than $delete_days_old days"
   echo "While KEEPING at least $min_to_keep of the newest images in the container registry"
   echo ""
-  echo "Tags from the images being deleted:"
   echo "Deleteable tags: $deletable_tags"
+  echo ""
 }
 
 # Tags being deleted on the images in container registry.
@@ -71,32 +71,34 @@ for tag in $deletable_tags; do
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
   # Checks the HTTP status error codes
+   
   if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
+    echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
   fi
 
-  if [ $http_status -ne 200 ] && [ $http_status -ne 404]; then
+  if [ $http_status -ne 204 ] && [ $http_status -ne 404]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
     exit 1
   fi
 done
 
-                # This will run a garbage collection and delete images no longer used and untagged images.
-                response=$(curl --silent \
-                                --write-out "HTTPSTATUS:%{http_code}" \
-                                -X POST \
-                                -H "Content-Type: application/json" \
-                                -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
-                                ""$containerRegistryAPIBaseURL"/garbage-collection")
+# This will run a garbage collection and delete images no longer used and untagged digest.
+response=$(curl --silent \
+                --write-out "HTTPSTATUS:%{http_code}" \
+                -X POST \
+                -H "Content-Type: application/json" \
+                -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                ""$containerRegistryAPIBaseURL"/garbage-collection")
                                 
-                # Separate the JSON response from the HTTP status
-                http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-                json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
+# Separate the JSON response from the HTTP status
+http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
-                # Checks the HTTP status error codes
-                if [ $http_status -ne 201 ]; then
-                  echo "Error: HTTP response $http_status"
-                  echo "Response body: $json_response"
-                  exit 1
-                fi
+# Checks the HTTP status error codes
+if [ $http_status -ne 201 ]; then
+  echo "Error: HTTP response $http_status"
+  echo "Response body: $json_response"
+  exit 1
+fi
