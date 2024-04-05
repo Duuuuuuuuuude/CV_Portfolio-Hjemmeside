@@ -2,7 +2,7 @@
 # Inspired by: https://laimis.medium.com/net-web-apps-on-digitalocean-85f0c3acd57f
 
 min_to_keep=10
-delete_days_old=2
+delete_days_old=1
 verbose=yes
 
 
