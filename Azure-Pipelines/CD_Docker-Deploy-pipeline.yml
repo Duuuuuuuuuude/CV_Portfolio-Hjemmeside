@@ -29,7 +29,6 @@ stages:
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
               branchName: 'artifact_publish_development'
-              artifactName: 'Manifests'
               targetPath: '$(Pipeline.Workspace)'
 
           - task: KubernetesManifest@1
