@@ -17,7 +17,9 @@ run_garbage_collection() {
                   ""$containerRegistryAPIBaseURL"/garbage-collection")
 
   echo ""$containerRegistryAPIBaseURL"/garbage-collection"
-                                
+  echo "Error: HTTP response $http_status"
+  echo "Response body: $json_response"
+
   # Separate the JSON response from the HTTP status
   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
