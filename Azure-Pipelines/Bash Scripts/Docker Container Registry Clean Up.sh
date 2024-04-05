@@ -33,6 +33,7 @@ fi
 # echo $json_response | jq -r ".tags[]" # DEBUG CODE
 # echo "$json_response" | jq # DEBUG CODE
 
+# Filters by delete_days_old and min_to_keep
 date_boundary=$(date -d-"$delete_days_old days" +%s)
 deletable_tags=$(echo $json_response | jq ".tags[$min_to_keep:] | .[] | select ( .updated_at | fromdateiso8601 < $date_boundary) | .tag " -r | tr '\n' ' ')
 
@@ -69,7 +70,6 @@ for tag in $deletable_tags; do
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
   # Checks the HTTP status error codes
-   
   if [$http_status -eq 404] && [[ "$verbose" == "yes" ]]; then
     echo "Error: HTTP response $http_status"
     echo "Response body: $json_response"
