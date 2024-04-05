@@ -66,7 +66,7 @@ stages:
     - script: |
         echo $(System.AccessToken) | az devops login
 
-        az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch artifact_publish_development
 
         az devops logout
       # condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
