@@ -89,6 +89,8 @@ response=$(curl --silent \
                 -H "Content-Type: application/json" \
                 -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
                 ""$containerRegistryAPIBaseURL"/garbage-collection")
+
+echo ""$containerRegistryAPIBaseURL"/garbage-collection"
                                 
 # Separate the JSON response from the HTTP status
 http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
