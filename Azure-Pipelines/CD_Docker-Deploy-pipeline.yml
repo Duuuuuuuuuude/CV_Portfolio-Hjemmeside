@@ -84,12 +84,12 @@ stages:
 ########## ROLLBACK GOES HERE
 
 - stage: Clean_up
-  displayName: Deploy stage
+  displayName: Clean up stage
   dependsOn: Deploy
   condition: succeeded('Deploy')
   jobs:
-  - job: deploy
-    displayName: Deploy job
+  - job: Clean_up
+    displayName: Clean up
     pool:
       vmImage: ubuntu-latest
     steps:
