@@ -32,6 +32,7 @@ stages:
         Dockerfile: '**/Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
+        arguments: '--build-arg ASPNETCORE_HTTP_PORTS=8800'
 
     # Imaged can't be pushed when there is an active garbage collection running, 
     # this will not let the push happen until after the garbage collection is finished, if there is one.
