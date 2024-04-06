@@ -19,7 +19,7 @@ spec:
       - name: koldstedev
         # image: {{DOCKER_IMAGE_NAME}}:{{DOCKER_IMAGE_TAG}} # Placeholders. Will be replaced in the Azure pipeline.
         ports:
-        - containerPort: 8080
+        - containerPort: 8800
           name: http
 
         securityContext: # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
