@@ -28,7 +28,7 @@ stages:
               project: '$(project)'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/main'
+              branchName: 'refs/heads/pipeline_env'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
