@@ -26,12 +26,13 @@ stages:
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
-        containerRegistry: $(containerRegistryServiceConnection)
+        containerRegistry: '$(containerRegistryServiceConnection)'
         repository: '$(imageRepository)'
         command: 'build'
         Dockerfile: '**/Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
+        arguments: '--build-arg ASPNETCORE_HTTP_PORTS=8800'
 
     # Imaged can't be pushed when there is an active garbage collection running, 
     # this will not let the push happen until after the garbage collection is finished, if there is one.
@@ -73,8 +74,8 @@ stages:
     - script: |
         echo $(System.AccessToken) | az devops login
 
-        az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch pipeline_env
 
         az devops logout
-      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'pipeline_env'))
       displayName: 'Trigger for CD_Docker-Deploy-pipeline'
