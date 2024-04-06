@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AgeCalculator" Version="1.4.0" />
+    <PackageReference Include="AgeCalculator" Version="1.4.1" />
   </ItemGroup>
 
 </Project>
