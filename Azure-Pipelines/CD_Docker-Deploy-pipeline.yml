@@ -1,4 +1,4 @@
-### THIS PIPELINE RUNS FOURTH/LAST AFTER THE "CI_Docker-build-push-azure-pipeline" PIPELINE ###
+### THIS PIPELINE RUNS FOURTH/LAST AND ALWAYS AFTER THE "CI_Docker-build-push-azure-pipeline" PIPELINE ###
 trigger: none # Should only be triggered by a pipeline that publishes the Manifest artifact.
 
 resources:
