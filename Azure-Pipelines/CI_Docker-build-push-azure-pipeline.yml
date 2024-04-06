@@ -11,7 +11,7 @@ resources:
 variables:
 - group: Container-Registry-do
 
-stages:
+stages: 
 - stage: Build
   displayName: Build image
   jobs:
@@ -26,7 +26,7 @@ stages:
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
-        containerRegistry: $(containerRegistry)
+        containerRegistry: $((containerRegistryServiceConnection))
         repository: '$(imageRepository)'
         command: 'build'
         Dockerfile: '**/Dockerfile'
@@ -47,7 +47,7 @@ stages:
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
       inputs:
-        containerRegistry: $(containerRegistry)
+        containerRegistry: $((containerRegistryServiceConnection))
         repository: '$(imageRepository)'
         command: 'push'
         tags: '$(tag)'
@@ -65,7 +65,7 @@ stages:
         
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'Koldste.dev.Web/Manifests'
+        targetPath: '$(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
 
