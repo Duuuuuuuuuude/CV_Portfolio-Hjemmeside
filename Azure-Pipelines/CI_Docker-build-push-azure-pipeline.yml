@@ -20,8 +20,6 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    
-    - script: set ASPNETCORE_HTTP_PORTS=8800
 
     # To lower the risk of an active garbage collection starting between the garbage collection check and the push,
     # build and push are not part of the same task, and seperated by a garbage collection check.
@@ -34,7 +32,6 @@ stages:
         Dockerfile: '**/Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
-        arguments: '--build-arg ASPNETCORE_HTTP_PORTS=8800'
 
     # Imaged can't be pushed when there is an active garbage collection running, 
     # this will not let the push happen until after the garbage collection is finished, if there is one.
