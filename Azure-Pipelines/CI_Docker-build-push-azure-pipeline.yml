@@ -26,7 +26,7 @@ stages:
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
-        containerRegistry: $((containerRegistryServiceConnection))
+        containerRegistry: $(containerRegistryServiceConnection)
         repository: '$(imageRepository)'
         command: 'build'
         Dockerfile: '**/Dockerfile'
@@ -47,7 +47,7 @@ stages:
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
       inputs:
-        containerRegistry: $((containerRegistryServiceConnection))
+        containerRegistry: $(containerRegistryServiceConnection)
         repository: '$(imageRepository)'
         command: 'push'
         tags: '$(tag)'
