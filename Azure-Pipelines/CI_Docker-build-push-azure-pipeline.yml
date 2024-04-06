@@ -53,8 +53,15 @@ stages:
         tags: '$(tag)'
 
     - script: |
-        docker images
-      displayName: 'List Docker images'
+        # Uncomments the image property.
+        sed -i "s|# image:|image:|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+
+        # Sets the name of the image property.
+        sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+
+        # Replaces the imager property value's placeholder.
+        sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+      displayName: 'Replace Docker image name and tag in deployment manifest file'
         
     - task: PublishPipelineArtifact@1
       inputs:
