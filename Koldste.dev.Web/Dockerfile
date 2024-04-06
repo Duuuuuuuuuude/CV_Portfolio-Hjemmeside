@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_HTTP_PORTS=8800
 ENTRYPOINT ["dotnet", "Koldste.dev.Web.dll"]
-
+ENV ASPNETCORE_HTTP_PORTS=8800
 # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
 # Switch to root user to add group and user
 USER root
@@ -41,3 +41,4 @@ RUN chown friendlyusername:friendlygroupname  /app
 USER friendlyusername:friendlygroupname 
 
 ENV COMPlus_EnableDiagnostics=0
+ENV ASPNETCORE_HTTP_PORTS=8800
