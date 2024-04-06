@@ -20,7 +20,7 @@ spec:
         # image: {{DOCKER_IMAGE_NAME}}:{{DOCKER_IMAGE_TAG}} # Placeholders. Will be replaced in the Azure pipeline.
         env:
         - name: ASPNETCORE_HTTP_PORTS
-          value: "8800"
+          value: 8800
         ports:
         - containerPort: 8800
           name: http
