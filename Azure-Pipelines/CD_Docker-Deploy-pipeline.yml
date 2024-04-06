@@ -25,10 +25,10 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               buildType: 'specific'
-              project: '7117b8dd-35b2-4579-98f7-0b9c9ef7810d'
+              project: '$(project)'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/artifact_publish_development'
+              branchName: 'refs/heads/main'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
@@ -54,7 +54,6 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
-              # rolloutStatusTimeout: '180'
 
 ########## ROLLBACK GOES HERE
 
