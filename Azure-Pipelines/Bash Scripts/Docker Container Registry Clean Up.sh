@@ -21,7 +21,7 @@ run_garbage_collection() {
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
   if [ $http_status -eq 409 ]; then
-    echo "Getting active garbage collection"
+    echo "Garbage collection is already running."
     echo
     response=$(curl --silent \
                     --write-out "HTTPSTATUS:%{http_code}" \
