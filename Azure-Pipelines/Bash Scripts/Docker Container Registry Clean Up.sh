@@ -21,11 +21,16 @@ run_garbage_collection() {
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
   if [ $http_status -eq 409 ]; then
-    echo "Garbage collection already running."
+    echo "Getting active garbage collection"
     echo
-    response=$(curl -X GET \
+    response=$(curl --silent \
+                    --write-out "HTTPSTATUS:%{http_code}" \
+                    -X GET \
+                    -H "Content-Type: application/json" \
                     -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
                     ""$containerRegistryAPIBaseURL"/garbage-collection")
+    echo "HTTP response $http_status"
+    echo "Response body: $json_response"
     exit 0
     echo
   fi
