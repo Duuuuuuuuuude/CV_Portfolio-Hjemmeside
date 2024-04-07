@@ -24,7 +24,7 @@ RUN dotnet publish "./Koldste.dev.Web.csproj" -c $BUILD_CONFIGURATION -o /app/pu
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV ASPNETCORE_HTTP_PORTS=8800
+ENV ASPNETCORE_HTTP_PORTS=8808
 ENV ASPNETCORE_HTTPS_PORTS=8800
 ENTRYPOINT ["dotnet", "Koldste.dev.Web.dll"]
 # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
