@@ -23,18 +23,31 @@ stages:
 
     # To lower the risk of an active garbage collection starting between the garbage collection check and the push,
     # build and push are not part of the same task, and seperated by a garbage collection check.
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          docker build -t registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag) -f **/Dockerfile .
+          && docker push registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag)
+          && kubectl set image registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag) -n backend
+          kubectl rollout status deployment koldstedev -n backend
+          || kubectl rollout undo deploy/koldstedev -n backend
+        workingDirectory: '.'
+        failOnStderr: true
+
     - task: Docker@2
       displayName: 'Building Docker image'
       inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
+        containerRegistry: $(containerRegistryServiceConnection)
         repository: '$(imageRepository)'
         command: 'build'
         Dockerfile: '**/Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
-        arguments: '--build-arg ASPNETCORE_HTTP_PORTS=8800'
-        addPipelineData: false
-        addBaseImageData: false
 
     # Imaged can't be pushed when there is an active garbage collection running, 
     # this will not let the push happen until after the garbage collection is finished, if there is one.
@@ -76,8 +89,8 @@ stages:
     - script: |
         echo $(System.AccessToken) | az devops login
 
-        az pipelines run --name CD_Docker-Deploy-pipeline --branch pipeline_env
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch main
 
         az devops logout
-      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'pipeline_env'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
       displayName: 'Trigger for CD_Docker-Deploy-pipeline'
