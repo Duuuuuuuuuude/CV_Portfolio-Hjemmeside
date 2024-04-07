@@ -61,7 +61,7 @@ stages:
         sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
 
         # Replaces the imager property value's placeholder.
-        sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+        sed -i "s|{{DOCKER_IMAGE_TAG}}|latest|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
       displayName: 'Replace Docker image name and tag in deployment manifest file'
         
     - task: PublishPipelineArtifact@1
