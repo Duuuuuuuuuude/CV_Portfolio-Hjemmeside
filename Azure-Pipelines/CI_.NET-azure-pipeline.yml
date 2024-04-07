@@ -6,7 +6,7 @@
 ### THIS PIPELINE RUNS FIRST ###
 trigger: # Another trigger is located at the bottom of this pipeline.
 - main
-- Development
+- development
 
 pool:
   vmImage: 'windows-latest'
