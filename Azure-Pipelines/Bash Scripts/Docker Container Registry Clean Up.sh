@@ -20,6 +20,16 @@ run_garbage_collection() {
   http_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   json_response=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g')
 
+  if [ $http_status -eq 409 ]; then
+    echo "Garbage collection already running."
+    echo
+    response=$(curl -X GET \
+                    -H "Authorization: Bearer "$bearerTokenContainerRegistry"" \
+                    ""$containerRegistryAPIBaseURL"/garbage-collection")
+    exit 0
+    echo
+  fi
+
   # Checks the HTTP status error codes
   if [ $http_status -ne 201 ]; then
     echo "Error: HTTP response $http_status"
