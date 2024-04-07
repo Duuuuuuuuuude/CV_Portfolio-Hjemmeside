@@ -29,7 +29,7 @@ stages:
         containerRegistry: $(containerRegistryServiceConnection)
         repository: '$(imageRepository)'
         command: 'build'
-        Dockerfile: '**/Dockerfile'
+        Dockerfile: 'Koldste.dev.Web/Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
 
