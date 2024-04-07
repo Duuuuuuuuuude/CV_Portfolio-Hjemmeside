@@ -21,14 +21,14 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
-    - task: DockerInstaller@0
-      inputs:
-        dockerVersion: '17.09.0-ce'
+    # - task: DockerInstaller@0
+    #   inputs:
+    #     dockerVersion: '17.09.0-ce'
         
 # /usr/bin/docker build -f /home/vsts/work/1/s/Koldste.dev.API/Dockerfile --label com.azure.dev.image.system.teamfoundationcollectionuri=https://dev.azure.com/MartinKoldste/ --label com.azure.dev.image.build.sourceversion=40a8e87eb4bd64ce1d43fee6b82ac6ffbc5e63d9 --build-arg ASPNETCORE_HTTP_PORTS=8800 -t registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:build-1184sha256-40a8e87eb4bd64ce1d43fee6b82ac6ffbc5e63d9 /home/vsts/work/1/s
 
     # To lower the risk of an active garbage collection starting between the garbage collection check and the push,
-    # # build and push are not part of the same task, and seperated by a garbage collection check.
+    # build and push are not part of the same task, and seperated by a garbage collection check.
     # - task: Bash@3
     #   displayName: 'Building Docker image'
     #   inputs:
@@ -44,7 +44,7 @@ stages:
         containerRegistry: $(containerRegistryServiceConnection)
         repository: '$(imageRepository)'
         command: 'build'
-        Dockerfile: '**/Dockerfile'
+        Dockerfile: 'Koldste.dev.Web//Dockerfile'
         buildContext: '.'
         tags: '$(tag)'
 
