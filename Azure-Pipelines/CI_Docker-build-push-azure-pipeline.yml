@@ -21,6 +21,10 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
     # To lower the risk of an active garbage collection starting between the garbage collection check and the push,
     # build and push are not part of the same task, and seperated by a garbage collection check.
     - task: Docker@2
