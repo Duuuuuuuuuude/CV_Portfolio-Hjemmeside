@@ -31,11 +31,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          docker build -t registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag) -f **/Dockerfile . \
-          && docker push registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag) \
-          && kubectl set image registry.digitalocean.com/koldste-dev-digitalocean-container-registry/azurepipeline/koldste.dev:$(tag) -n backend \
-          kubectl rollout status deployment koldstedev -n backend \
-          || kubectl rollout undo deploy/koldstedev -n backend
+          docker build -t $(containerRegistryURL)/$(imageRepository)/:$(tag) -f Koldste.dev.Web/Dockerfile .
         workingDirectory: '.'
         failOnStderr: true
 
