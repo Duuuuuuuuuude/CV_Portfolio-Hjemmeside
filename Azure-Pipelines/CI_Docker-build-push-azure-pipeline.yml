@@ -42,7 +42,7 @@ stages:
         command: 'Build an image'
         dockerFile: '**/Dockerfile'
         arguments: '--build-arg ASPNETCORE_HTTP_PORTS=8800'
-        imageName: 'registry.digitalocean.com/$(registryName)/$(repositoryName)_$:(tag)'
+        imageName: 'registry.digitalocean.com/$(registryName)/$(repositoryName):$(tag)'
         includeSourceTags: true
         useDefaultContext: false
         buildContext: '.'
