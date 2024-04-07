@@ -31,7 +31,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          docker build -t $(containerRegistryURL)/$(imageRepository)/:$(tag) -f Koldste.dev.Web/Dockerfile .
+          docker build -t $(containerRegistryURL)/$(imageRepository):$(tag) -f Koldste.dev.Web/Dockerfile .
         workingDirectory: '.'
         failOnStderr: true
 
