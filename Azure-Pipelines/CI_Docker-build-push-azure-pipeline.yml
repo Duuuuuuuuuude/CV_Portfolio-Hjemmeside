@@ -21,10 +21,6 @@ stages:
       vmImage: ubuntu-latest
     steps:
 
-    - task: DockerInstaller@0
-      inputs:
-        dockerVersion: '17.09.0-ce'
-
     # To lower the risk of an active garbage collection starting between the garbage collection check and the push,
     # build and push are not part of the same task, and seperated by a garbage collection check.
     - task: Docker@2
@@ -58,18 +54,18 @@ stages:
 
     - script: |
         # Uncomments the image property.
-        sed -i "s|# image:|image:|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+        sed -i "s|# image:|image:|" Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
 
         # Sets the name of the image property.
-        sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+        sed -i "s|{{DOCKER_IMAGE_NAME}}|$(containerRegistryURL)/$(imageRepository)|g" Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
 
         # Replaces the imager property value's placeholder.
-        sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)|" $(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
+        sed -i "s|{{DOCKER_IMAGE_TAG}}|$(tag)slet|" Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
       displayName: 'Replace Docker image name and tag in deployment manifest file'
         
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)/Koldste.dev.Web/Manifests'
+        targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
 
@@ -77,8 +73,8 @@ stages:
     - script: |
         echo $(System.AccessToken) | az devops login
 
-        az pipelines run --name CD_Docker-Deploy-pipeline --branch pipeline_env
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch main
 
         az devops logout
-      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'pipeline_env'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
       displayName: 'Trigger for CD_Docker-Deploy-pipeline'
