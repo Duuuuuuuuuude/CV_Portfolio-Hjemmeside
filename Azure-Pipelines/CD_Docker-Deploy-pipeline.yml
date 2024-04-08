@@ -57,50 +57,55 @@ stages:
               imagePullSecrets: '$(imagePullSecret)'
 
 ### AUTOMATIC ROLLBACK ### // TODO: Temp
-          - task: Kubernetes@1
-            displayName: Kubernetes login
-            inputs:
-              connectionType: 'Kubernetes Service Connection'
-              kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
-              namespace: '$(k8sNamespace)'
-              command: 'login'
-                
-          - task: PowerShell@2
-            displayName: Check rollout status
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo "Checking rollout status for deployment/koldstedev in namespace $(k8sNamespace)"
-                echo ""
-                if (!(kubectl rollout status deployment/koldstedev -n $(k8sNamespace))) {
-                  echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), undoing rollout"
-                  kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
-                }else {
-                  echo ""
-                  echo "Rollout status check passed for deployment/koldstedev in namespace $(k8sNamespace). Awaiting manual validation."
-                  echo ""
-                }
-
-          - task: Kubernetes@1
-            displayName: Kubernetes logout
-            inputs:
-              command: 'logout'
-
-
-### USER VALIDATION/MANUEL ROLLBACK ###
-  - job: validation
+  - job: automaticValidation
     dependsOn: Deploy
+    pool:
+      vmImage: ubuntu-latest
+      environment: koldstedev-do-kubernetes
+    steps:
+      - task: Kubernetes@1
+        displayName: Kubernetes login
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
+          namespace: '$(k8sNamespace)'
+          command: 'login'
+                
+      - task: PowerShell@2
+        displayName: Check rollout status
+        inputs:
+          targetType: 'inline'
+          script: |
+            echo "Checking rollout status for deployment/koldstedev in namespace $(k8sNamespace)"
+            echo ""
+            if (!(kubectl rollout status deployment/koldstedev -n $(k8sNamespace))) {
+              echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), undoing rollout"
+              kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
+            }else {
+              echo ""
+              echo "Rollout status check passed for deployment/koldstedev in namespace $(k8sNamespace). Awaiting manual validation."
+            }
+
+      - task: Kubernetes@1
+        displayName: Kubernetes logout
+        inputs:
+          command: 'logout'
+
+
+### MANUAL USER VALIDATION ROLLBACK ###
+  - job: manualValidation
+    dependsOn: automaticValidation
     pool: server
     steps:
-    - task: ManualValidation@0
-      inputs:
-        notifyUsers: '$(notifyEmailAddress)'
-        instructions: 'Reject to perform at rollback of the current deployment'
-        onTimeout: 'resume'
+      - task: ManualValidation@0
+        inputs:
+          notifyUsers: '$(notifyEmailAddress)'
+          instructions: 'Reject to perform at rollback of the current deployment'
+          onTimeout: 'resume'
 
   - deployment: rollback
     displayName: rollback
-    dependsOn: validation
+    dependsOn: manualValidation
     condition: failed()
     environment: koldstedev-do-kubernetes
     strategy:
