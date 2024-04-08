@@ -75,6 +75,13 @@ stages:
         deploy:
           steps:
 
+            - task: Kubernetes@1
+              inputs:
+                connectionType: 'Kubernetes Service Connection'
+                kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
+                namespace: '$(k8sNamespace)'
+                command: 'login'
+                
             - task: PowerShell@2
               displayName: rolling back
               inputs:
