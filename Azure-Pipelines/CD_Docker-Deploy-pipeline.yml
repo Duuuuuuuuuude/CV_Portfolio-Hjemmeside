@@ -7,6 +7,7 @@ resources:
 variables: 
 - group: Container-Registry-do
 
+### DEPLOY ###
 stages:
 - stage: Deploy
   
@@ -55,6 +56,17 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
 
+### AUTOMATIC ROLLBACK ###
+          - task: Kubernetes@1
+            displayName: Check rollout status
+            inputs:
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'koldstedev-do-kubernetes-backend-1711399786755'
+              namespace: '$(k8sNamespace)'
+              command: 'exec'
+              arguments: 'kubectl rollout status deployment/koldstedev -n $(k8sNamespace) || kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)'
+
+### USER VALIDATION/MANUEL ROLLBACK ###
   - job: validation
     dependsOn: Deploy
     pool: server
@@ -95,6 +107,7 @@ stages:
               inputs:
                 command: 'logout'
 
+### CLEAN UP/ GARBAGE COLLECTION ###
 
 - stage: Clean_up
   displayName: Clean up stage
