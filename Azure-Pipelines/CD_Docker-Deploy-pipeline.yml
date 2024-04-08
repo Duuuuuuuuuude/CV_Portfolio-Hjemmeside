@@ -28,7 +28,7 @@ stages:
               project: '$(project)'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/pipeline_env'
+              branchName: 'refs/heads/main'
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
@@ -55,7 +55,15 @@ stages:
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
 
-########## ROLLBACK GOES HERE
+  - job: validation
+    dependsOn: Deploy
+    pool: server
+    steps:
+    - task: ManualValidation@0
+      inputs:
+        notifyUsers: '$(notifyEmailAddress)'
+        instructions: 'continue?'
+        onTimeout: reject
 
 - stage: Clean_up
   displayName: Clean up stage
