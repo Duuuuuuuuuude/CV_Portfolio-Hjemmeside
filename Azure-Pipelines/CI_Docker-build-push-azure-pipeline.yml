@@ -69,12 +69,12 @@ stages:
         artifact: 'Manifests'
         publishLocation: 'pipeline'
 
-
+    # // TODO LAV OM TIL MAIN
     - script: |
         echo $(System.AccessToken) | az devops login
 
-        az pipelines run --name CD_Docker-Deploy-pipeline --branch pipeline_env
+        az pipelines run --name CD_Docker-Deploy-pipeline --branch pipeline_env 
 
         az devops logout
-      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'pipeline_env'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'pipeline_env')) # // TODO LAV OM TIL MAIN
       displayName: 'Trigger for CD_Docker-Deploy-pipeline'
