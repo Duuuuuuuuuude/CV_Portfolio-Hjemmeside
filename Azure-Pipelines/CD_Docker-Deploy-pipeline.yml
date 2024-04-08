@@ -80,7 +80,7 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                    kubectl undo deployment/koldstedev -n $(k8sNamespace)
+                    kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
 
 - stage: Clean_up
   displayName: Clean up stage
