@@ -61,7 +61,7 @@ stages:
     steps:
     - task: ManualValidation@0
       inputs:
-        notifyUsers: 'Martin Koldste'
+        notifyUsers: '$(notifyEmailAddress)'
         instructions: 'Reject to perform at rollback of the current deployment'
         onTimeout: 'resume'
 
