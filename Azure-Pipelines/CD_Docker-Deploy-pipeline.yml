@@ -89,6 +89,11 @@ stages:
                 script: |
                     kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
 
+            - task: Kubernetes@1
+              inputs:
+                command: 'logout'
+
+
 - stage: Clean_up
   displayName: Clean up stage
   dependsOn: Deploy
