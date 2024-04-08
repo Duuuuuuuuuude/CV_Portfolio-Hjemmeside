@@ -75,6 +75,8 @@ stages:
                 if (!(kubectl rollout status deployment/koldstedev -n $(k8sNamespace))) {
                   echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), undoing rollout"
                   kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
+                }else {
+                  echo "Rollout status check passed for deployment/koldstedev in namespace $(k8sNamespace). Awaiting manual validation."
                 }
 
           - task: Kubernetes@1
