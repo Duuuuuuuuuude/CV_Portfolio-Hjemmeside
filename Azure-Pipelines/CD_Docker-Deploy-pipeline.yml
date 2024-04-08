@@ -29,7 +29,7 @@ stages:
               project: '$(project)'
               definition: '25'
               buildVersionToDownload: 'latestFromBranch'
-              branchName: 'refs/heads/main'
+              branchName: 'refs/heads/pipeline_env' # // TODO LAV OM TIL MAIN
               artifactName: 'Manifests'
               targetPath: '$(System.ArtifactsDirectory)/Manifests'
 
@@ -148,7 +148,7 @@ stages:
     - task: Bash@3
       displayName: 'Clean up the container registry'
       inputs:
-        filePath: 'Azure-Pipelines/Bash Scripts/Docker Container Registry Clean Up.sh'
+        filePath: 'Azure-Pipelines/Bash Scripts/Docker Container Registry Clean Up.sh' 
         failOnStderr: true
       env:
         bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
