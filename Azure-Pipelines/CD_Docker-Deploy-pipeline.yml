@@ -62,8 +62,25 @@ stages:
     - task: ManualValidation@0
       inputs:
         notifyUsers: '$(notifyEmailAddress)'
-        instructions: 'continue?'
-        onTimeout: reject
+        instructions: 'Reject to perform at rollback of the current deployment'
+        onTimeout: 'resume'
+
+  - deployment: rollback
+    displayName: rollback
+    dependsOn: validation
+    condition: failed()
+    environment: koldstedev-do-kubernetes
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+            - task: PowerShell@2
+              displayName: rolling back
+              inputs:
+                targetType: 'inline'
+                script: |
+                    kubectl undo deployment/koldstedev -n $(k8sNamespace)
 
 - stage: Clean_up
   displayName: Clean up stage
