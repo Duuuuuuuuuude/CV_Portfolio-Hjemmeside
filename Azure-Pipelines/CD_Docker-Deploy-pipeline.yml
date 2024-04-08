@@ -76,6 +76,7 @@ stages:
                   echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), undoing rollout"
                   kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
                 }else {
+                  echo ""
                   echo "Rollout status check passed for deployment/koldstedev in namespace $(k8sNamespace). Awaiting manual validation."
                   echo ""
                 }
