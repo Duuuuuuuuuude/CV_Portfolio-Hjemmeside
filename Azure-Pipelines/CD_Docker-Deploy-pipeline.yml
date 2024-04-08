@@ -72,10 +72,10 @@ stages:
               script: |
                 echo "Checking rollout status for deployment/koldstedev in namespace $(k8sNamespace)"
                 
-                kubectl rollout status deployment/koldstedev -n $(k8sNamespace) \
-
-                || (echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), \
-                undoing rollout" && kubectl rollout undo deployment/koldstedev -n $(k8sNamespace))
+                if (!(kubectl rollout status deployment/koldstedev -n $(k8sNamespace))) {
+                  echo "Rollout failed for deployment/koldstedev in namespace $(k8sNamespace), undoing rollout"
+                  kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
+                }
 
           - task: Kubernetes@1
             displayName: Kubernetes logout
