@@ -33,4 +33,4 @@ app.MapControllerRoute(
 
 app.MapFallbackToController("Index", "Search");
 
-//app.Run();
+app.Run();
