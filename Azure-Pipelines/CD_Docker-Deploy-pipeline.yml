@@ -85,13 +85,20 @@ stages:
                 namespace: '$(k8sNamespace)'
                 command: 'login'
                 
-            - task: PowerShell@2
-              displayName: rolling back
+            # - task: PowerShell@2
+            #   displayName: rolling back
+            #   inputs:
+            #     targetType: 'inline'
+            #     script: |
+            #         kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace)
+            #         kubectl rollout status deployment $(deployment) -n $(k8sNamespace)
+            - task: Bash@3
               inputs:
                 targetType: 'inline'
                 script: |
-                    kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace)
-                    kubectl rollout status deployment $(deployment) -n $(k8sNamespace)
+                  kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace)
+                  kubectl rollout status deployment $(deployment) -n $(k8sNamespace)
+                failOnStderr: true
 
             - task: Kubernetes@1
               displayName: Kubernetes logout
