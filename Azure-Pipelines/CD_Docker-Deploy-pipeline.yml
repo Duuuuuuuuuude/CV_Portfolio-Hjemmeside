@@ -95,6 +95,8 @@ stages:
                     echo ""
                     echo "Running command: rollout status deployment $(deployment) -n $(k8sNamespace)"
                     kubectl rollout status deployment $(deployment) -n $(k8sNamespace)
+                    echo ""
+                    echo "Successfully rolled back deployment ($(deployment))"
 
             - task: Kubernetes@1
               displayName: Kubernetes logout
