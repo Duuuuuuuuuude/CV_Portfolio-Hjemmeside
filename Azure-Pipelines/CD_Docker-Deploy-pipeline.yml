@@ -110,7 +110,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-      - script: echo "Rollback has been skipped because manual validation succeeded."
+      - script: echo "Rollback has been skipped because of manual validation."
       
 ### CLEAN UP/ GARBAGE COLLECTION ###
 
