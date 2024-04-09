@@ -7,6 +7,7 @@ resources:
 variables: 
 - group: Container-Registry-do
 
+### DEPLOY ###
 stages:
 - stage: Deploy
   
@@ -48,14 +49,61 @@ stages:
             inputs:
               action: 'deploy'
               connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: 'koldstedev-do-kubernetes-backend-1711399786755'
+              kubernetesServiceConnection: '$(kubernetesServiceConnection)'
               namespace: '$(k8sNamespace)'
               manifests: |
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Deployment_koldstedev.yaml
                 $(System.ArtifactsDirectory)/Manifests/website-koldstedev/Service_koldstedev.yaml
               imagePullSecrets: '$(imagePullSecret)'
 
-########## ROLLBACK GOES HERE
+### MANUAL VALIDATION ROLLBACK ###
+  - job: manualValidation
+    dependsOn: deploy
+    pool: server
+    steps:
+      - task: ManualValidation@0
+        inputs:
+          notifyUsers: '$(notifyEmailAddress)'
+          instructions: 'Reject to perform a rollback of the current deployment ($(deployment)). $(testLink)'
+          onTimeout: 'resume'
+
+  - deployment: rollback
+    displayName: rollback
+    dependsOn: manualValidation
+    condition: failed('manualValidation')
+    environment: koldstedev-do-kubernetes
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+            - task: Kubernetes@1
+              displayName: Kubernetes login
+              inputs:
+                connectionType: 'Kubernetes Service Connection'
+                kubernetesServiceEndpoint: '$(kubernetesServiceConnection)'
+                namespace: '$(k8sNamespace)'
+                command: 'login'
+                
+            - task: PowerShell@2
+              displayName: rolling back
+              inputs:
+                targetType: 'inline'
+                script: |
+                    echo "Running command: kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace)"
+                    kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace)
+                    echo ""
+                    echo "Running command: rollout status deployment $(deployment) -n $(k8sNamespace)"
+                    kubectl rollout status deployment $(deployment) -n $(k8sNamespace) &&
+                    echo "" &&
+                    echo "Successfully rolled back deployment ($(deployment))"
+
+            - task: Kubernetes@1
+              displayName: Kubernetes logout
+              inputs:
+                command: 'logout'
+      
+### CLEAN UP/ GARBAGE COLLECTION ###
 
 - stage: Clean_up
   displayName: Clean up stage
