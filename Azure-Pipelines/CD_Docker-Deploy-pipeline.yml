@@ -67,10 +67,21 @@ stages:
           instructions: 'Reject to perform a rollback of the current deployment ($(deployment)). $(testLink)'
           onTimeout: 'resume'
 
+  - job: printSucceedMessage
+    displayName: Print Message
+    dependsOn: manualValidation
+    condition: succeeded('manualValidation')
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: |
+            echo ""
+            echo "Rollback has been skipped because of manual validation."
+
   - deployment: rollback
     displayName: rollback
     dependsOn: manualValidation
-    condition: failed()
+    condition: failed('manualValidation')
     environment: koldstedev-do-kubernetes
     strategy:
       runOnce:
@@ -102,15 +113,6 @@ stages:
               displayName: Kubernetes logout
               inputs:
                 command: 'logout'
-
-  - job: printSucceedMessage
-    displayName: Print Message
-    dependsOn: manualValidation
-    condition: succeeded('manualValidation')
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-      - script: echo "Rollback has been skipped because of manual validation."
       
 ### CLEAN UP/ GARBAGE COLLECTION ###
 
