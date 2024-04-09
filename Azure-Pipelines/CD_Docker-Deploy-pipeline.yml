@@ -64,7 +64,7 @@ stages:
       - task: ManualValidation@0
         inputs:
           notifyUsers: '$(notifyEmailAddress)'
-          instructions: 'Reject to perform a rollback of the current deployment. $(test)'
+          instructions: 'Reject to perform a rollback of the current deployment ($(deployment)). $(testLink)'
           onTimeout: 'resume'
 
   - deployment: rollback
@@ -90,7 +90,8 @@ stages:
               inputs:
                 targetType: 'inline'
                 script: |
-                    kubectl rollout undo deployment/koldstedev -n $(k8sNamespace)
+                    kubectl rollout undo deployment/$(deployment) -n $(k8sNamespace) \
+                    && kubectl rollout status deployment $(deployment) -n (k8sNamespace)
 
             - task: Kubernetes@1
               displayName: Kubernetes logout
