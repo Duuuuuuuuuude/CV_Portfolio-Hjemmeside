@@ -82,3 +82,12 @@ stages:
         az devops logout
       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
       displayName: 'Trigger for CD_Docker-Deploy-pipeline'
+
+    - script: |
+        echo $(System.AccessToken) | az devops login
+
+        az pipelines run --name Azure-repo-to-GitHub-repo-sync-pipeline --branch $(Build.SourceBranchName)
+
+        az devops logout
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranchName'], 'main'), eq(variables['Build.SourceBranchName'], 'development')))
+      displayName: 'Trigger for Azure-repo-to-GitHub-repo-sync-pipeline'
