@@ -5,9 +5,8 @@
 #       PrivateEmail
 #   Make sure git-filter-repo  file is in the root directory of the repo (same folder as the .git file). Located here: https://github.com/newren/git-filter-repo.
 
-trigger:
-- main
-- development
+### THIS PIPELINE RUNS FIFTH/LAST AND ALWAYS AFTER THE "CI_Docker-build-push-azure-pipeline" PIPELINE ###
+trigger: none # Triggered from "CI_Docker-build-push-azure-pipeline", to make it trigger last and make deployments/tests happen fastere.
 
 pool:
   vmImage: 'windows-latest'
