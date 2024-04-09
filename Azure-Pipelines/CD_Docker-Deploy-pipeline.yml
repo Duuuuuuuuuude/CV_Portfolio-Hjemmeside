@@ -103,6 +103,15 @@ stages:
               inputs:
                 command: 'logout'
 
+  - job: printSucceedMessage
+    displayName: Print Message
+    dependsOn: manualValidation
+    condition: succeeded('manualValidation')
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - script: echo "Rollback has been skipped because manual validation succeeded."
+      
 ### CLEAN UP/ GARBAGE COLLECTION ###
 
 - stage: Clean_up
