@@ -67,17 +67,6 @@ stages:
           instructions: 'Reject to perform a rollback of the current deployment ($(deployment)). $(testLink)'
           onTimeout: 'resume'
 
-  - job: printSucceedMessage
-    displayName: Print Message
-    dependsOn: manualValidation
-    condition: succeeded('manualValidation')
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-      - script: |
-            echo ""
-            echo "Rollback has been skipped because of manual validation."
-
   - deployment: rollback
     displayName: rollback
     dependsOn: manualValidation
