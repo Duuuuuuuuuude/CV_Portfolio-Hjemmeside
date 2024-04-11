@@ -34,19 +34,24 @@ stages:
         tags: '$(tag)'
     
     # Docker Scout CVE Report
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        command: 'login'
+
     - task: CmdLine@2
       displayName: Find CVEs on image
       inputs:
         script: |
           # Install the Docker Scout CLI
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
-          # Login to Docker Hub required for Docker Scout CLI
-          docker login -u $(DOCKER_HUB_USER) -p $(DOCKER_HUB_PAT)
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
           docker scout cves --exit-code --only-severity critical,high
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(containerRegistryServiceConnection)'
+        command: 'logout'
 
-    # Imaged can't be pushed when there is an active garbage collection running, 
-    # this will not let the push happen until after the garbage collection is finished, if there is one.
     - task: Bash@3
       displayName: 'Waits for the garbage collection to be done, if necessary'
       condition: eq(variables['Build.SourceBranchName'], 'main')
