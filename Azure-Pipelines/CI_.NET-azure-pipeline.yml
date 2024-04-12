@@ -3,10 +3,7 @@
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 
-### THIS PIPELINE RUNS FIRST ###
-trigger: # Another trigger is located at the bottom of this pipeline.
-- main
-- development
+trigger: none # Triggered by the trigger pipeline.
 
 pool:
   vmImage: 'windows-latest'
@@ -34,14 +31,3 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-
-- script: |
-    echo $(System.AccessToken) | az devops login
-
-    az pipelines run --name CI_playwright-azure-pipeline --branch $(Build.SourceBranchName)
-
-    az devops logout
-        
-  condition: succeeded()
-  displayName: 'Trigger for CI_playwright-azure-pipeline'
