@@ -56,7 +56,6 @@ stages:
           # docker version
           
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
-          /home/vsts/.docker/cli-plugins/docker-scout $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag) --exit-code --only-severity critical,high
           /home/vsts/.docker/cli-plugins/docker-scout $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag)
           # docker scout cves $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag) --exit-code --only-severity critical,high
 
