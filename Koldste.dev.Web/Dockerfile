@@ -5,6 +5,8 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
+# https://devblogs.microsoft.com/dotnet/running-nonroot-kubernetes-with-dotnet/
+USER $APP_UID
 WORKDIR /app
 EXPOSE 8800
 
@@ -26,19 +28,8 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENV ASPNETCORE_HTTP_PORTS=8800
 
+# Container hardening
 # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
-# Switch to root user to add group and user
-USER root
-
-RUN addgroup --group friendlygroupname --gid 2000 \
-&& adduser \    
-    --uid 1000 \
-    --gid 2000 \
-    "friendlyusername" 
-
-RUN chown friendlyusername:friendlygroupname  /app
-USER friendlyusername:friendlygroupname 
-
 ENV COMPlus_EnableDiagnostics=0
 
 ENTRYPOINT ["dotnet", "Koldste.dev.Web.dll"]

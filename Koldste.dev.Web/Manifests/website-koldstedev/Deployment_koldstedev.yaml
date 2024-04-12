@@ -24,8 +24,7 @@ spec:
 
         securityContext: # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 2000
+            runAsUser: 64198 # USER $APP_UID set in Dockerfile
             allowPrivilegeEscalation: false
             privileged: false
             readOnlyRootFilesystem: true
