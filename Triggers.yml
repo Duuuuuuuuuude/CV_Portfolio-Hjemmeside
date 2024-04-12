@@ -1,0 +1,41 @@
+trigger: # Another trigger is located at the bottom of this pipeline.
+- main
+- development
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- script: |
+    echo $(System.AccessToken) | az devops login
+  displayName: 'az login'
+
+# Triggers "CI_.NET-azure-pipeline"
+- script: |
+    az pipelines run --name CI_playwright-azure-pipeline --branch $(Build.SourceBranchName)
+  condition: succeeded()
+  displayName: 'Trigger for CI_playwright-azure-pipeline'
+
+# Triggers "CI_playwright-azure-pipeline"
+- script: |
+    az pipelines run --name CI_Docker-build-push-azure-pipeline --branch $(Build.SourceBranchName)
+  displayName: 'Trigger for CI_Docker-build-push-azure-pipeline'
+  
+# Triggers "CD_Docker-Deploy-pipeline"
+- script: |
+    az pipelines run --name CD_Docker-Deploy-pipeline --branch main
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+  displayName: 'Trigger for CD_Docker-Deploy-pipeline'
+
+# Triggers "Azure-repo-to-GitHub-repo-sync-pipeline"
+- script: |
+    az pipelines run --name Azure-repo-to-GitHub-repo-sync-pipeline --branch $(Build.SourceBranchName)
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranchName'], 'main'), eq(variables['Build.SourceBranchName'], 'development')))
+  displayName: 'Trigger for Azure-repo-to-GitHub-repo-sync-pipeline'
+
+# Logout
+- script: |
+    az devops logout
+  condition: always()
+  displayName: 'Trigger for Azure-repo-to-GitHub-repo-sync-pipeline'
