@@ -21,14 +21,14 @@ spec:
         ports:
         - containerPort: 8800
           name: http
-
-        securityContext: # https://techcommunity.microsoft.com/t5/microsoft-developer-community/hardening-an-asp-net-container-running-on-kubernetes/ba-p/2542224
+        securityContext:
             runAsNonRoot: true
             runAsUser: 64198 # USER $APP_UID set in Dockerfile
             allowPrivilegeEscalation: false
             privileged: false
             readOnlyRootFilesystem: true
+            seccompProfile:
+                type: RuntimeDefault
             capabilities:
                 drop:
                 - all
-              
