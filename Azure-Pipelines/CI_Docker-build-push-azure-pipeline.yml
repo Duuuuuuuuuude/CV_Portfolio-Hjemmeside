@@ -38,11 +38,11 @@ stages:
       inputs:
         dockerVersion: '17.09.0-ce'
 
-    - task: Docker@2
-      displayName: 'Docker login'
-      inputs:
-        containerRegistry: '$(containerRegistryServiceConnection)'
-        command: 'login'
+    # - task: Docker@2
+    #   displayName: 'Docker login'
+    #   inputs:
+    #     containerRegistry: '$(containerRegistryServiceConnection)'
+    #     command: 'login'
 
     - task: CmdLine@2
       displayName: Find CVEs on image using Docker Scout
