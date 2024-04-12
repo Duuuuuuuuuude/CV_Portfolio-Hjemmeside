@@ -1,11 +1,10 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-# Build commands to use outside Visual Studio:
-#	Production version: docker build --build-arg ASPNET_TAG_SUFFIX=-chiseled-extra -t koldste/koldste.dev:prod -f .\Koldste.dev.Web\Dockerfile .
-#	Debug version: docker build -t koldste/koldste.dev:dev -f .\Koldste.dev.Web\Dockerfile .
+# Build command to use outside Visual Studio. Should be used in the soluction directory: 
+	docker build --build-arg ASPNET_TAG_SUFFIX=-chiseled-extra -t koldste/koldste.dev:dev -f .\Koldste.dev.Web\Dockerfile .
 
-# Run commands to run above images from the soluction directory: docker run -ti -p 80:8800 koldste/koldste.dev:prod
-#																 docker run -ti -p 80:8800 koldste/koldste.dev:dev																		   
+# Run command for the above image: 
+	docker run -ti -p 80:8800 koldste/koldste.dev:dev																		   
 
 # https://github.com/dotnet/dotnet-docker/blob/main/documentation/ubuntu-chiseled.md
 ARG ASPNET_TAG_SUFFIX
@@ -27,7 +26,7 @@ RUN dotnet build "./Koldste.dev.Web.csproj" -c $BUILD_CONFIGURATION -o /app/buil
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Koldste.dev.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
+ 
 # TODO: HEALTHCHECK
 # HEALTHCHECK --interval=5m --timeout=3s --retries=3 \
 # CMD curl --fail http://localhost || exit 1
