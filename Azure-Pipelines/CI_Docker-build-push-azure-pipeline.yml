@@ -44,9 +44,7 @@ stages:
         containerRegistry: '$(containerRegistryServiceConnection)'
         command: 'login'
 
-    # - task: CmdLine@2
-    - task: PowerShell@2
-    # - task: Bash@3
+    - task: CmdLine@2
       displayName: Find CVEs on image using Docker Scout
       inputs:
         script: |
