@@ -33,6 +33,26 @@ stages:
         buildContext: '.'
         tags: '$(tag)'
     
+
+    - task: Bash@3
+      displayName: 'Waits for the garbage collection to be done, if necessary'
+      condition: eq(variables['Build.SourceBranchName'], 'main')
+      inputs:
+        filePath: 'Azure-Pipelines/Bash Scripts/Image Push Retention - Wait For The Garbage Collection To Be Done.sh'
+        failOnStderr: true
+      env:
+        bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
+        containerRegistryAPIBaseURL: $(containerRegistryAPIBaseURL)
+
+    - task: Docker@2
+      displayName: 'Pushing the image to the container registry'
+      condition: eq(variables['Build.SourceBranchName'], 'main')
+      inputs:
+        containerRegistry: $(containerRegistryServiceConnection)
+        repository: '$(imageRepository)'
+        command: 'push'
+        tags: '$(tag)'
+
     # Docker Scout CVE Report
     - task: DockerInstaller@0
       inputs:
@@ -62,26 +82,7 @@ stages:
       inputs:
         containerRegistry: '$(containerRegistryServiceConnection)'
         command: 'logout'
-
-    - task: Bash@3
-      displayName: 'Waits for the garbage collection to be done, if necessary'
-      condition: eq(variables['Build.SourceBranchName'], 'main')
-      inputs:
-        filePath: 'Azure-Pipelines/Bash Scripts/Image Push Retention - Wait For The Garbage Collection To Be Done.sh'
-        failOnStderr: true
-      env:
-        bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
-        containerRegistryAPIBaseURL: $(containerRegistryAPIBaseURL)
-
-    - task: Docker@2
-      displayName: 'Pushing the image to the container registry'
-      condition: eq(variables['Build.SourceBranchName'], 'main')
-      inputs:
-        containerRegistry: $(containerRegistryServiceConnection)
-        repository: '$(imageRepository)'
-        command: 'push'
-        tags: '$(tag)'
-
+        
     - script: |
         # Uncomments the image property.
         sed -i "s|# image:|image:|" Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
