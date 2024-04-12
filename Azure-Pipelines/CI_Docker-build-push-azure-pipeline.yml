@@ -54,7 +54,6 @@ stages:
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
           docker scout cves $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag) --exit-code --only-severity critical,high
 
-
     - task: Docker@2
       displayName: Docker Logout
       inputs:
