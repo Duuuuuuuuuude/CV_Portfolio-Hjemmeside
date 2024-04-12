@@ -48,12 +48,12 @@ stages:
       displayName: Find CVEs on image using Docker Scout
       inputs:
         script: |
+          set -e
           # Install the Docker Scout CLI
           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
-          
+          docker version
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
           docker scout cves $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag) --exit-code --only-severity critical,high
-        failOnStderr: true
 
     - task: Docker@2
       displayName: Docker Logout
