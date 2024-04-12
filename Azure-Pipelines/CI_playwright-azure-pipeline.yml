@@ -1,5 +1,4 @@
-### THIS PIPELINE RUNS SECOND AND AFTER THE "CI_.NET-azure-pipeline" PIPELINE ###
-trigger: none # Trigger is located at the bottom of this pipeline.
+trigger: none # Triggered by the trigger pipeline.
 
 resources:
 - repo: self
@@ -19,13 +18,3 @@ steps:
   displayName: 'Install Playwright browsers'
 - script: dotnet test --configuration Release
   displayName: 'Run tests'
-
-- script: |
-    echo $(System.AccessToken) | az devops login
-
-    az pipelines run --name CI_Docker-build-push-azure-pipeline --branch $(Build.SourceBranchName)
-
-    az devops logout
-        
-  condition: succeeded()
-  displayName: 'Trigger for CI_Docker-build-push-azure-pipeline'
