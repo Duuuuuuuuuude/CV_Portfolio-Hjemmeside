@@ -28,6 +28,10 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Koldste.dev.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# TODO: HEALTHCHECK
+# HEALTHCHECK --interval=5m --timeout=3s --retries=3 \
+# CMD curl --fail http://localhost || exit 1
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
