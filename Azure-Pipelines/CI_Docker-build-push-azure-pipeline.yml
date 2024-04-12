@@ -36,7 +36,7 @@ stages:
     # Docker Scout CVE Report
     - task: DockerInstaller@0
       inputs:
-        dockerVersion: '17.09.0-ce'
+        dockerVersion: '24.0.9'
 
     - task: Docker@2
       displayName: 'Docker login'
