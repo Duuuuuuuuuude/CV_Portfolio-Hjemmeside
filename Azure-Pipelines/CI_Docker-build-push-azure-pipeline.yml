@@ -34,6 +34,7 @@ stages:
         tags: '$(tag)'
         arguments: '--build-arg ASPNET_TAG_SUFFIX=-chiseled-extra'
 
+    # Docker Scout:
     - task: Docker@2
       displayName: 'Docker login'
       inputs:
@@ -50,6 +51,7 @@ stages:
           # Get a CVE report for the built image and fail the pipeline when critical or high CVEs are detected
           ~/.docker/cli-plugins/docker-scout cves $(containerRegistryURL)/$(registryName)/$(repositoryName):$(tag)
 
+    # Garbage collection:
     # Imaged can't be pushed when there is an active garbage collection running, 
     # this will not let the push happen until after the garbage collection is finished, if there is one.
     - task: Bash@3
@@ -62,6 +64,7 @@ stages:
         bearerTokenContainerRegistry: $(bearerTokenContainerRegistry)
         containerRegistryAPIBaseURL: $(containerRegistryAPIBaseURL)
 
+    # Push image to the container registry:
     - task: Docker@2
       displayName: 'Pushing the image to the container registry'
       condition: eq(variables['Build.SourceBranchName'], 'main')
@@ -71,6 +74,7 @@ stages:
         command: 'push'
         tags: '$(tag)'
 
+    # Add the image to the deployment manifest.
     - script: |
         # Uncomments the image property.
         sed -i "s|# image:|image:|" Koldste.dev.Web/Manifests/website-koldstedev/Deployment_koldstedev.yaml
@@ -83,14 +87,15 @@ stages:
       condition: eq(variables['Build.SourceBranchName'], 'main')
       displayName: 'Replace Docker image name and tag in deployment manifest file'
         
+    # Publish manifests from repo.
     - task: PublishPipelineArtifact@1
       condition: eq(variables['Build.SourceBranchName'], 'main')
       inputs:
         targetPath: 'Koldste.dev.Web/Manifests'
         artifact: 'Manifests'
         publishLocation: 'pipeline'
-
-
+        
+    # Triggers
     - script: |
         echo $(System.AccessToken) | az devops login
 
